@@ -21,5 +21,5 @@ Both the `local_dir` and `remote_dir` should be an absolute path.
 
 The `pattern` can be a string or an array. The `pattern` should at least match all directories if you want to listen `create` and `move` operations. For example:
 
-- To ignore `js` and `css` file: `**/*.!(js|css)`.
-- To only watch 'js' and `css`: `['**/', '**/*.+(js|css)']`
+- To ignore `js` and `css` file: `'**/*.!(js|css)'`.
+- To only watch `js` and `css`: `['**/', '**/*.+(js|css)']`
