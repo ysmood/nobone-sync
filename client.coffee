@@ -20,7 +20,7 @@ module.exports = (conf) ->
 				kit.path.join conf.remote_dir, path.replace(conf.local_dir, '').replace('/', '')
 			)
 			rdata = {
-				url: 'http://' + conf.host + "/#{type}/#{remote_path}"
+				url: "http://#{conf.host}:#{conf.port}/#{type}/#{remote_path}"
 				method: 'POST'
 			}
 
