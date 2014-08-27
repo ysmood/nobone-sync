@@ -1,3 +1,11 @@
+## Install
+
+Make sure you have nobone installed.
+
+```
+npm i -g nobone-sync
+```
+
 Start a remote file server:
 
     nobone sync -s
