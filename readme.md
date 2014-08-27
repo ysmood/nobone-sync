@@ -6,6 +6,8 @@ Make sure you have nobone installed.
 npm i -g nobone-sync
 ```
 
+## Usage
+
 Start a remote file server:
 
     nobone sync -s
