@@ -11,6 +11,7 @@ process.env.watch_persistent = 'on'
 module.exports = (conf) ->
 	kit.watch_dir {
 		dir: conf.local_dir
+		pattern: conf.pattern
 		handler: (type, path, old_path) ->
 			kit.log type.cyan + ': ' + path +
 				(if old_path then ' <- '.cyan + old_path else '')
