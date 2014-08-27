@@ -1,0 +1,25 @@
+{
+  "name": "nobone-sync",
+  "version": "0.0.1",
+  "description": "A simple remote file sync tool for interal network.",
+  "main": "main.coffee",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ysmood/nobone-sync.git"
+  },
+  "keywords": [
+    "nobone",
+    "plugin",
+    "remote",
+    "sync"
+  ],
+  "author": "http://ysmood.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ysmood/nobone-sync/issues"
+  },
+  "homepage": "https://github.com/ysmood/nobone-sync"
+}
