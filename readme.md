@@ -2,9 +2,7 @@
 
 Make sure you have nobone installed.
 
-```
-npm i -g nobone-sync
-```
+    npm i -g nobone-sync
 
 ## Usage
 
