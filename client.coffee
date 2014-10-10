@@ -6,8 +6,6 @@
 nobone = require 'nobone'
 { kit } = nobone()
 
-process.env.watch_persistent = 'on'
-
 module.exports = (conf) ->
 	kit.watch_dir {
 		dir: conf.local_dir
@@ -24,7 +22,7 @@ module.exports = (conf) ->
 				method: 'POST'
 			}
 
-			p = kit.Q()
+			p = kit.Promise.resolve()
 
 			switch type
 				when 'create', 'modify'
