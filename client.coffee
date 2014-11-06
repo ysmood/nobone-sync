@@ -45,9 +45,9 @@ module.exports = (conf) ->
 				else
 					kit.err data
 			.catch (err) ->
-				kit.err err
+				kit.err err.stack.red
 	}
 	.then (list) ->
 		kit.log 'Watched: '.cyan + kit._.keys(list).length
 	.catch (err) ->
-		kit.err err
+		kit.err err.stack.red
