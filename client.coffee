@@ -43,11 +43,11 @@ module.exports = (conf) ->
 				if data == 'ok'
 					kit.log 'Synced: '.green + path
 				else
-					kit.err data
+					kit.log data
 			.catch (err) ->
-				kit.err err.stack.red
+				kit.log err.stack.red
 	}
 	.then (list) ->
 		kit.log 'Watched: '.cyan + kit._.keys(list).length
 	.catch (err) ->
-		kit.err err.stack.red
+		kit.log err.stack.red
