@@ -7,7 +7,7 @@ nobone = require 'nobone'
 { kit } = nobone()
 
 module.exports = (conf) ->
-	kit.watch_dir {
+	kit.watchDir {
 		dir: conf.local_dir
 		pattern: conf.pattern
 		handler: (type, path, old_path) ->
@@ -15,7 +15,7 @@ module.exports = (conf) ->
 				(if old_path then ' <- '.cyan + old_path else '')
 
 			remote_path = encodeURIComponent(
-				kit.path.join conf.remote_dir, path.replace(conf.local_dir, '').replace('/', '')
+				kit.path.join conf.remote_dir, kit.path.relative(conf.local_dir, path)
 			)
 			rdata = {
 				url: "http://#{conf.host}:#{conf.port}/#{type}/#{remote_path}"
@@ -30,9 +30,9 @@ module.exports = (conf) ->
 						p = p.then ->
 							kit.readFile path
 						.then (data) ->
-							rdata.req_data = data
+							rdata.reqData = data
 				when 'move'
-					rdata.req_data = kit.path.join(
+					rdata.reqData = kit.path.join(
 						conf.remote_dir
 						old_path.replace(conf.local_dir, '').replace('/', '')
 					)
