@@ -7,6 +7,8 @@ nobone = require 'nobone'
 { kit } = nobone()
 
 module.exports = (conf) ->
+	process.env.pollingWatch = conf.polling_interval
+
 	kit.watchDir {
 		dir: conf.local_dir
 		pattern: conf.pattern

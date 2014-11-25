@@ -4,3 +4,4 @@ module.exports =
 	host: '127.0.0.1'
 	port: 8345
 	pattern: '**'
+	polling_interval: 500

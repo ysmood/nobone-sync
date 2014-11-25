@@ -23,9 +23,13 @@ module.exports =
     host: '127.0.0.1'
     port: 8345
     pattern: '**'
+    polling_interval: 500
 ```
 
 The `pattern` can be a string or an array. The `pattern` should at least match all directories if you want to listen `create` and `move` operations. For example:
 
 - To ignore `js` and `css` file: `'**/*.!(js|css)'`.
 - To only watch `js`, `css` and `jpg`: `[**/*.+(js|css)', '**/*.jpg']`
+
+Use bigger polling_interval if there are too many files to be watched.
+
