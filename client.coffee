@@ -16,8 +16,14 @@ module.exports = (conf) ->
 			kit.log type.cyan + ': ' + path +
 				(if old_path then ' <- '.cyan + old_path else '')
 
+			is_dir = path[-1..] == '/'
+
 			remote_path = encodeURIComponent(
-				kit.path.join conf.remote_dir, kit.path.relative(conf.local_dir, path)
+				kit.path.join(
+					conf.remote_dir
+					kit.path.relative(conf.local_dir, path)
+					if is_dir then '/' else ''
+				)
 			)
 			rdata = {
 				url: "http://#{conf.host}:#{conf.port}/#{type}/#{remote_path}"
@@ -28,7 +34,7 @@ module.exports = (conf) ->
 
 			switch type
 				when 'create', 'modify'
-					if path[-1..] != '/'
+					if not is_dir
 						p = p.then ->
 							kit.readFile path
 						.then (data) ->
