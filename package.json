@@ -1,6 +1,6 @@
 {
   "name": "nobone-sync",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A simple remote file sync tool for interal network.",
   "main": "main.coffee",
   "scripts": {
@@ -22,7 +22,7 @@
     "url": "https://github.com/ysmood/nobone-sync/issues"
   },
   "homepage": "https://github.com/ysmood/nobone-sync",
-  "devDependencies": {
+  "dependencies": {
     "nobone": "*"
   }
 }
