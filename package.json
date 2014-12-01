@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/ysmood/nobone-sync",
   "dependencies": {
+    "commander": "*",
     "nobone": "*"
   }
 }
