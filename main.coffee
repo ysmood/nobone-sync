@@ -2,6 +2,7 @@
 
 cmder = require 'commander'
 
+cmder.option '-h --help', 'Help', -> cmder.help()
 cmder.option '-s --server'
 
 cmder.parse process.argv

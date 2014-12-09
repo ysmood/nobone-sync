@@ -13,6 +13,8 @@ module.exports = (conf) ->
 		dir: conf.local_dir
 		pattern: conf.pattern
 		handler: (type, path, old_path) ->
+			conf.on_change?.apply 0, arguments
+
 			kit.log type.cyan + ': ' + path +
 				(if old_path then ' <- '.cyan + old_path else '')
 

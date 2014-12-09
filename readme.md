@@ -6,6 +6,8 @@ Make sure you have nobone installed.
 
 ## Usage
 
+### As CLI Tool
+
 Start a remote file server:
 
     nobone sync -s
@@ -24,6 +26,8 @@ module.exports =
     port: 8345
     pattern: '**'
     polling_interval: 500
+    on_change: (type, path, old_path) ->
+        console.log('Write your custom code here')
 ```
 
 The `pattern` can be a string or an array. The `pattern` should at least match all directories if you want to listen `create` and `move` operations. For example:
@@ -33,3 +37,23 @@ The `pattern` can be a string or an array. The `pattern` should at least match a
 
 Use bigger polling_interval if there are too many files to be watched.
 
+### As Library
+
+```
+client = require 'nobone-sync/client'
+server = require 'nobone-sync/server'
+
+conf = {
+    local_dir: 'local_dir'
+    remote_dir: 'remote_dir'
+    host: '127.0.0.1'
+    port: 8345
+    pattern: '**'
+    polling_interval: 500
+    on_change: (type, path, old_path) ->
+        console.log('Write your custom code here')
+}
+
+client conf
+server conf
+```
