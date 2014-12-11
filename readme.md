@@ -18,7 +18,7 @@ Start a local client to push change to remote server.
 
 The defaults of `config.coffee` is:
 
-```coffeescript
+```coffee
 module.exports =
     local_dir: 'local_dir'
     remote_dir: 'remote_dir'
@@ -30,16 +30,16 @@ module.exports =
         console.log('Write your custom code here')
 ```
 
-The `pattern` can be a string or an array. The `pattern` should at least match all directories if you want to listen `create` and `move` operations. For example:
+The `pattern` can be a string or an array, it takes advantage of `minimatch`.Some simple usages:
 
-- To ignore `js` and `css` file: `'**/*.!(js|css)'`.
+- To ignore `js` and `css` file: `'!**/*.(js|css)'`.
 - To only watch `js`, `css` and `jpg`: `[**/*.+(js|css)', '**/*.jpg']`
 
-Use bigger polling_interval if there are too many files to be watched.
+Use larger polling_interval if there are too many files to be watched.
 
 ### As Library
 
-```
+```coffee
 client = require 'nobone-sync/client'
 server = require 'nobone-sync/server'
 
