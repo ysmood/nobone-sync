@@ -9,7 +9,8 @@ cmder.parse process.argv
 
 try
 	conf = require kit.path.resolve(cmder.args[1])
-catch
+catch err
+	kit.err err.toString()
 	kit.log 'No config specified, use default config.'.yellow
 	conf = {}
 kit._.defaults conf, require('./config.default')
