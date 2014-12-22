@@ -11,7 +11,7 @@ try
 	conf = require kit.path.resolve(cmder.args[1])
 catch err
 	kit.err err.toString()
-	kit.log 'No config specified, use default config.'.yellow
+	kit.log 'Config error, use default config.'.yellow
 	conf = {}
 kit._.defaults conf, require('./config.default')
 
