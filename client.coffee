@@ -65,4 +65,7 @@ module.exports = (conf, watch = true) ->
 		.catch (err) ->
 			kit.log err.stack.red
 	else
-		watch_handler('create', conf.local_dir)
+		kit.glob conf.local_dir
+		.then (paths)->
+			paths.forEach (file)->
+				watch_handler 'create', file
