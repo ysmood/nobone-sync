@@ -8,6 +8,12 @@ Make sure you have nobone installed.
 
 ### As CLI Tool
 
+Push a file or directory to remote server
+    
+    nobone -p local_path host[:port] remote_dir
+
+> local_path can be a file , a directory, or a glob pattern.
+
 Start a remote file server:
 
     nobone sync -s
