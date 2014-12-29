@@ -4,7 +4,7 @@
 # This this the local watcher.
 
 nobone = require 'nobone'
-{ kit } = nobone()
+{ kit } = nobone
 
 module.exports = (conf, watch = true) ->
 	process.env.pollingWatch = conf.polling_interval
@@ -78,6 +78,9 @@ module.exports = (conf, watch = true) ->
 			kit.glob conf.glob,
 				nodir: true
 				dot: true
+		, (err)->
+			kit.err err
+			process.exit 1
 		.then (paths)->
 			paths.forEach (file)->
 				watch_handler 'create', file
