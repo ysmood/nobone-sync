@@ -2,8 +2,9 @@
 
 cmder = require 'commander'
 
+cmder.option '-h, --help', 'Help', -> cmder.help()
 cmder.option '-s, --server'
-cmder.option '-p, --push <local_file remote_url remote_path>'
+cmder.option '--push <local_file remote_url remote_path>'
 
 cmder.parse process.argv
 
