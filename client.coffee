@@ -65,7 +65,19 @@ module.exports = (conf, watch = true) ->
 		.catch (err) ->
 			kit.log err.stack.red
 	else
-		kit.glob conf.local_dir
+		kit.lstat conf.local_dir
+		.then (stat)->
+			if stat.isDirectory()
+				if conf.local_dir.slice(-1) is '/'
+					conf.glob = conf.local_dir + '**/*'
+				else
+					conf.glob = conf.local_dir + '/**/*'
+			else
+				conf.glob = conf.local_dir
+				conf.local_dir = kit.path.dirname conf.local_dir
+			kit.glob conf.glob,
+				nodir: true
+				dot: true
 		.then (paths)->
 			paths.forEach (file)->
 				watch_handler 'create', file
