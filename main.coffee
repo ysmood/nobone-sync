@@ -8,11 +8,11 @@ cmder.option '-p, --push <local_file remote_url remote_path>'
 cmder.parse process.argv
 
 if cmder.push
-	if cmder.args.length is 3
+	if cmder.args.length is 2
 		conf = {}
-		file = cmder.args[0]
-		remote_host = cmder.args[1]
-		remote_path = cmder.args[2]
+		file = cmder.push
+		remote_host = cmder.args[0]
+		remote_path = cmder.args[1]
 
 		host = remote_host.split ':'
 		file and conf.local_dir = file
