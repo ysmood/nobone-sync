@@ -4,14 +4,14 @@ cmder = require 'commander'
 
 cmder.option '-h, --help', 'Help', -> cmder.help()
 cmder.option '-s, --server'
-cmder.option '--push <local_file remote_url remote_path>'
+cmder.option '-u, --upload <local_file remote_url remote_path>'
 
 cmder.parse process.argv
 
-if cmder.push
+if cmder.upload
 	if cmder.args.length is 2
 		conf = {}
-		file = cmder.push
+		file = cmder.upload
 		remote_host = cmder.args[0]
 		remote_path = cmder.args[1]
 
