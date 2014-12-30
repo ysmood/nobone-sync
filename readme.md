@@ -9,8 +9,8 @@ Make sure you have nobone installed.
 ### As CLI Tool
 
 Push a file or directory to remote server
-    
-    nobone -p local_path host[:port] remote_dir
+
+    nobone -u local_path host:port remote_dir
 
 > local_path can be a file , a directory, or a glob pattern.
 
