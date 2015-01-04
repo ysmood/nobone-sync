@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/ysmood/nobone-sync",
   "dependencies": {
-    "coffee-script": "^1.8.0",
+    "coffee-script": "*",
     "commander": "*",
     "nobone": "*"
   }

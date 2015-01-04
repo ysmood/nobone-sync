@@ -4,26 +4,30 @@ cmder = require 'commander'
 
 cmder.option '-h, --help', 'Help', -> cmder.help()
 cmder.option '-s, --server'
-cmder.option '-u, --upload <local_file remote_url remote_path>'
+cmder.option '-u, --upload <local_file host[:port]/path/to/dir>', 'Upload file or directory to remote host.'
 
 cmder.parse process.argv
-
 if cmder.upload
-	if cmder.args.length is 2
+	if cmder.args.length is 1
 		conf = {}
-		file = cmder.upload
-		remote_host = cmder.args[0]
-		remote_path = cmder.args[1]
 
-		host = remote_host.split ':'
+		file = cmder.upload
 		file and conf.local_dir = file
-		conf.host = host[0]
-		host[1] and conf.port = host[1]
-		remote_path and conf.remote_dir = remote_path
+
+		remote = /([^\/:]+)(:\d+)?\/(.*)/.exec cmder.args[0]
+
+		if not remote or not remote[3]
+			kit.err 'Wrong argument, host[:port]/path/to/file wanted.'
+			process.exit 1
+
+		conf.host = remote[1] or ''
+		port = remote[2] or ':8345'
+		conf.port = port[1...]
+		conf.remote_dir = "/" + remote[3]
 
 		require('./client') conf, false
 	else if cmder.args.length isnt 0
-		kit.log "Wrong args number, 3 wanted"
+		kit.err "Wrong args number, 2 wanted"
 else
 
 	try

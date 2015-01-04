@@ -6,24 +6,13 @@
 nobone = require 'nobone'
 { kit } = nobone
 
+is_dir = (path)->
+	path[-1..] == '/'
+
 module.exports = (conf, watch = true) ->
 	process.env.pollingWatch = conf.polling_interval
 
-	watch_handler = (type, path, old_path) ->
-		conf.on_change?.apply 0, arguments
-
-		kit.log type.cyan + ': ' + path +
-			(if old_path then ' <- '.cyan + old_path else '')
-
-		is_dir = path[-1..] == '/'
-
-		remote_path = encodeURIComponent(
-			kit.path.join(
-				conf.remote_dir
-				kit.path.relative(conf.local_dir, path)
-				if is_dir then '/' else ''
-			)
-		)
+	sendReq = (file_path, type, remote_path)->
 		rdata = {
 			url: "http://#{conf.host}:#{conf.port}/#{type}/#{remote_path}"
 			method: 'POST'
@@ -33,9 +22,9 @@ module.exports = (conf, watch = true) ->
 
 		switch type
 			when 'create', 'modify'
-				if not is_dir
+				if not is_dir file_path
 					p = p.then ->
-						kit.readFile path
+						kit.readFile file_path
 					.then (data) ->
 						rdata.reqData = data
 			when 'move'
@@ -48,11 +37,35 @@ module.exports = (conf, watch = true) ->
 			kit.request rdata
 		.then (data) ->
 			if data == 'ok'
-				kit.log 'Synced: '.green + path
+				kit.log 'Synced: '.green + file_path
 			else
 				kit.log data
 		.catch (err) ->
 			kit.log err.stack.red
+
+	watch_handler = (type, path, old_path) ->
+		conf.on_change?.apply 0, arguments
+
+		kit.log type.cyan + ': ' + path +
+			(if old_path then ' <- '.cyan + old_path else '')
+
+		remote_path = encodeURIComponent(
+			kit.path.join(
+				conf.remote_dir
+				kit.path.relative(conf.local_dir, path)
+				if is_dir(path) then '/' else ''
+			)
+		)
+		sendReq path, type, remote_path
+
+	push = (path)->
+		kit.log "Uploading file: " + path
+		file_name = if conf.push_dir then path else kit.path.basename path
+
+		remote_path = encodeURIComponent(
+			kit.path.join conf.remote_dir, file_name
+		)
+		sendReq path, 'create', remote_path
 
 	if watch
 		kit.watchDir {
@@ -65,22 +78,20 @@ module.exports = (conf, watch = true) ->
 		.catch (err) ->
 			kit.log err.stack.red
 	else
+		conf.glob = conf.local_dir
 		kit.lstat conf.local_dir
 		.then (stat)->
 			if stat.isDirectory()
+				conf.push_dir = true
 				if conf.local_dir.slice(-1) is '/'
 					conf.glob = conf.local_dir + '**/*'
 				else
 					conf.glob = conf.local_dir + '/**/*'
-			else
-				conf.glob = conf.local_dir
-				conf.local_dir = kit.path.dirname conf.local_dir
+		, (err)->
+			kit.Promise.resolve()
+		.then ->
 			kit.glob conf.glob,
 				nodir: true
 				dot: true
-		, (err)->
-			kit.err err
-			process.exit 1
 		.then (paths)->
-			paths.forEach (file)->
-				watch_handler 'create', file
+			paths.forEach push

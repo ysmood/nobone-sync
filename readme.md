@@ -10,9 +10,9 @@ Make sure you have nobone installed.
 
 Push a file or directory to remote server
 
-    nobone -u local_path host:port remote_dir
+    nobone -u local_path host[:port]/path/to/dir
 
-> local_path can be a file , a directory, or a glob pattern.
+> local_path can be a file, a directory, or a glob pattern(glob pattern should use with quotation marks).
 
 Start a remote file server:
 
