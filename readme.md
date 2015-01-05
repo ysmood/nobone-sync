@@ -10,7 +10,7 @@ Make sure you have nobone installed.
 
 Push a file or directory to remote server
 
-    nobone -u local_path host[:port]/path/to/dir
+    nobone-sync -u local_path host[:port]/path/to/dir
 
 > local_path can be a file, a directory, or a glob pattern(glob pattern should use with quotation marks).
 
@@ -39,7 +39,7 @@ module.exports =
 The `pattern` can be a string or an array, it takes advantage of `minimatch`.Some simple usages:
 
 - To ignore `js` and `css` file: `'!**/*.@(js|css)'`.
-- To only watch `js`, `css` and `jpg`: `[**/*.@(js|css)', '**/*.jpg']`
+- To only watch `js`, `css` and `jpg`: `['**/*.@(js|css)', '**/*.jpg']`
 
 Use larger polling_interval if there are too many files to be watched.
 
