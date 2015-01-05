@@ -14,7 +14,7 @@ module.exports = (conf, watch = true) ->
 
 	sendReq = (file_path, type, remote_path)->
 		rdata = {
-			url: "http://#{conf.host}:#{conf.port}/#{type}/#{remote_path}"
+			url: "http://#{conf.host}:#{conf.port}/#{type}/#{encodeURIComponent remote_path}"
 			method: 'POST'
 		}
 
@@ -49,22 +49,20 @@ module.exports = (conf, watch = true) ->
 		kit.log type.cyan + ': ' + path +
 			(if old_path then ' <- '.cyan + old_path else '')
 
-		remote_path = encodeURIComponent(
-			kit.path.join(
+		remote_path = kit.path.join(
 				conf.remote_dir
 				kit.path.relative(conf.local_dir, path)
 				if is_dir(path) then '/' else ''
 			)
-		)
 		sendReq path, type, remote_path
 
 	push = (path)->
-		kit.log "Uploading file: " + path
-		file_name = if conf.push_dir then path else kit.path.basename path
+		file_name = if conf.base_dir then kit.path.relative conf.base_dir, path else kit.path.basename path
 
-		remote_path = encodeURIComponent(
-			kit.path.join conf.remote_dir, file_name
-		)
+		remote_path = kit.path.join conf.remote_dir, file_name
+
+		kit.log "Uploading file: ".green + file_name + ' to '.green + remote_path
+
 		sendReq path, 'create', remote_path
 
 	if watch
@@ -82,7 +80,7 @@ module.exports = (conf, watch = true) ->
 		kit.lstat conf.local_dir
 		.then (stat)->
 			if stat.isDirectory()
-				conf.push_dir = true
+				conf.base_dir = kit.path.dirname conf.local_dir
 				if conf.local_dir.slice(-1) is '/'
 					conf.glob = conf.local_dir + '**/*'
 				else
