@@ -1,3 +1,9 @@
+# nobone-sync
+
+A simple remote file sync tool for interal network.
+
+[![NPM version](https://badge.fury.io/js/nobone-sync.svg)](http://badge.fury.io/js/nobone-sync) [![Build Status](https://travis-ci.org/ysmood/nobone-sync.svg)](https://travis-ci.org/ysmood/nobone-sync) [![Deps Up to Date](https://david-dm.org/ysmood/nobone-sync.svg?style=flat)](https://david-dm.org/ysmood/nobone-sync)
+
 ## Install
 
 Make sure you have nobone installed.
