@@ -66,8 +66,7 @@ module.exports = (conf, watch = true) ->
 		sendReq path, 'create', remote_path
 
 	if watch
-		kit.watchDir {
-			dir: conf.local_dir
+		kit.watchDir conf.local_dir, {
 			pattern: conf.pattern
 			handler: watch_handler
 		}
