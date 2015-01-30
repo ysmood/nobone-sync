@@ -67,7 +67,7 @@ module.exports = (conf, watch = true) ->
 
 	if watch
 		kit.watchDir conf.local_dir, {
-			pattern: conf.pattern
+			patterns: conf.pattern
 			handler: watch_handler
 		}
 		.then (list) ->
