@@ -9,8 +9,8 @@ conf = {
 	remote_dir: 'test/remote'
 	host: '127.0.0.1'
 	port: 8345
-	pattern: '**'
-	polling_interval: 500
+	pattern: ['**/*.js']
+	polling_interval: 30
 	on_change: (type, path, old_path) ->
 		setTimeout ->
 			s = kit.fs.readFileSync 'test/remote/a.txt', 'utf8'
