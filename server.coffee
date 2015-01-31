@@ -19,7 +19,7 @@ module.exports = (conf) ->
 		type = req.params.type
 		path = local_path req.params.path
 
-		kit.log type.cyan + ': ' + path
+		kit.log "[server] ".grey + type.cyan + ': ' + path
 
 		data = new Buffer(0)
 		req.on 'data', (chunk) ->
