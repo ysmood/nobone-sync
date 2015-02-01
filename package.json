@@ -28,6 +28,6 @@
   "dependencies": {
     "coffee-script": "1.9.0",
     "commander": "2.6.0",
-    "nobone": "1.4.2"
+    "nobone": "1.4.3"
   }
 }

@@ -1,6 +1,7 @@
 client = require '../client'
 server = require '../server'
 { kit } = require 'nobone'
+kit.require 'colors'
 
 now = Date.now() + ''
 
@@ -20,7 +21,7 @@ conf = {
 
 		if path == 'test/local/dir/a.txt'
 			setTimeout ->
-				s = kit.fs.readFileSync 'test/remote/dir/a.txt', 'utf8'
+				s = kit.readFileSync 'test/remote/dir/a.txt', 'utf8'
 				if modifyPassed and s == now
 					process.exit 0
 				else
@@ -33,13 +34,13 @@ client conf
 server conf
 
 setTimeout ->
-	kit.fs.touchSync 'test/local/b.css'
+	kit.touchSync 'test/local/b.css'
 , 400
 
 setTimeout ->
-	kit.fs.outputFileSync 'test/local/dir/a.txt', now
+	kit.outputFileSync 'test/local/dir/a.txt', now
 , 500
 
 process.on 'exit', ->
-	kit.fs.removeSync 'test/local/dir/a.txt'
-	kit.fs.removeSync 'test/remote/dir/a.txt'
+	kit.removeSync 'test/local/dir/a.txt'
+	kit.removeSync 'test/remote/dir/a.txt'

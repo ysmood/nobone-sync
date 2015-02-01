@@ -1,4 +1,5 @@
 { kit } = require 'nobone'
+kit.require 'colors'
 
 cmder = require 'commander'
 
