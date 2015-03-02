@@ -1,6 +1,7 @@
 client = require '../client'
 server = require '../server'
 { kit } = require 'nobone'
+{ Promise } = kit
 kit.require 'colors'
 
 now = Date.now() + ''
@@ -31,7 +32,9 @@ conf = {
 }
 
 client conf
-server conf
+server kit._.defaults { on_change: ->
+	new Promise (r) -> setTimeout r, 1
+}, conf
 
 setTimeout ->
 	kit.touchSync 'test/local/b.css'
