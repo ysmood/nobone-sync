@@ -5,6 +5,7 @@
 
 
 nobone = require 'nobone'
+kit.require 'colors'
 
 { kit, service } = nobone()
 

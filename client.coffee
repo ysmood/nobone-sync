@@ -5,6 +5,7 @@
 
 nobone = require 'nobone'
 { kit } = nobone
+kit.require 'colors'
 
 is_dir = (path)->
 	path[-1..] == '/'
