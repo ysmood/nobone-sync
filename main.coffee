@@ -32,7 +32,7 @@ if cmder.upload
 else
 
 	try
-		conf = require kit.path.resolve(cmder.args[1])
+		conf = require kit.path.resolve(cmder.args[1] or cmder.args[0])
 	catch err
 		kit.err err.toString()
 		kit.log 'Config error, use default config.'.yellow
