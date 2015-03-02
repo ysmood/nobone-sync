@@ -26,6 +26,7 @@ module.exports = (conf) ->
 			data = Buffer.concat [data, chunk]
 
 		req.on 'end', ->
+			old_path = null
 			switch req.params.type
 				when 'create'
 					if path[-1..] == '/'
@@ -35,7 +36,8 @@ module.exports = (conf) ->
 				when 'modify'
 					p = kit.outputFile path, data
 				when 'move'
-					p = kit.move local_path(data.toString()), path.replace(/\/+$/, '')
+					old_path = local_path(data.toString())
+					p = kit.move old_path, path.replace(/\/+$/, '')
 				when 'delete'
 					p = kit.remove path
 				else
@@ -43,7 +45,7 @@ module.exports = (conf) ->
 					return
 
 			p.then ->
-				kit.Promise.resolve conf.on_change?.call 0, type, path
+				kit.Promise.resolve conf.on_change?.call 0, type, path, old_path
 			.then ->
 				res.send 'ok'
 			.catch (err) ->

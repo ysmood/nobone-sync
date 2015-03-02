@@ -44,7 +44,6 @@ module.exports = (conf, watch = true) ->
 			kit.log err.stack.red
 
 	watch_handler = (type, path, old_path) ->
-
 		kit.log type.cyan + ': ' + path +
 			(if old_path then ' <- '.cyan + old_path else '')
 
@@ -54,9 +53,9 @@ module.exports = (conf, watch = true) ->
 				if is_dir(path) then '/' else ''
 			)
 
-		kit.Promise.resolve conf.on_change?.apply 0, arguments
+		sendReq path, type, remote_path
 		.then ->
-			sendReq path, type, remote_path
+			conf.on_change?.call 0, type, path, old_path
 
 	push = (path)->
 		file_name = if conf.base_dir then kit.path.relative conf.base_dir, path else kit.path.basename path
