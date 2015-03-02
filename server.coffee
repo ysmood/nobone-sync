@@ -43,6 +43,8 @@ module.exports = (conf) ->
 					return
 
 			p.then ->
+				kit.Promise.resolve conf.on_change?.call 0, type, path
+			.then ->
 				res.send 'ok'
 			.catch (err) ->
 				kit.err err
