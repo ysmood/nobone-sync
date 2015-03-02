@@ -1,6 +1,6 @@
 {
   "name": "nobone-sync",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "A simple remote file sync tool for interal network.",
   "main": "main.coffee",
   "bin": {
