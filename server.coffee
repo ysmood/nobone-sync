@@ -5,9 +5,9 @@
 
 
 nobone = require 'nobone'
-kit.require 'colors'
 
 { kit, service } = nobone()
+kit.require 'colors'
 
 local_path = (path) ->
 	if process.platform == 'win32'
