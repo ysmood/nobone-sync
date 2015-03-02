@@ -64,6 +64,7 @@ conf = {
     pattern: '**'
     polling_interval: 500
     on_change: (type, path, old_path) ->
+        # It can also return a promise.
         console.log('Write your custom code here')
 }
 
