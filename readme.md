@@ -42,7 +42,10 @@ module.exports =
     port: 8345
     pattern: '**'
     polling_interval: 500
+
+    # If it is set, data will be encrypted with aes128.
     password: null
+
     on_change: (type, path, old_path) ->
         # It can also return a promise.
         console.log('Write your custom code here')
@@ -121,4 +124,3 @@ server conf
 - SSL?
 
   > I don't have any plan for it, for now simple symmetric cryto is enough for development. If you need it, please open an issue.
-
