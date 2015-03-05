@@ -3,6 +3,9 @@
   "version": "0.3.2",
   "description": "A simple remote file sync tool for interal network.",
   "main": "main.coffee",
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "bin": {
     "nobone-sync": "cli.js"
   },
