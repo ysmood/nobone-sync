@@ -37,26 +37,38 @@ module.exports = (conf) ->
 
 		kit.log "[server] ".grey + type.cyan + ': ' + path
 
-		data = new Buffer(0)
-		req.on 'data', (chunk) ->
-			data = Buffer.concat [data, chunk]
+		p = kit.Promise.resolve()
+
+		reqStream = if conf.password
+			crypto = kit.require 'crypto', __dirname
+			decipher = crypto.createDecipher 'aes128', conf.password
+			req.pipe decipher
+		else
+			data = new Buffer 0
+			req.on 'data', (chunk) ->
+				data = Buffer.concat [data, chunk]
+			req
+
+		switch req.params.type
+			when 'create'
+				if path[-1..] == '/'
+					p = kit.mkdirs path
+				else
+					reqStream = reqStream.pipe kit.createWriteStream path
+			when 'modify'
+				reqStream = reqStream.pipe kit.createWriteStream path
 
 		req.on 'end', ->
 			old_path = null
 
-			if conf.password and data.length > 0
-				data = kit.decrypt data, conf.password
-
 			switch req.params.type
-				when 'create'
-					if path[-1..] == '/'
-						p = kit.mkdirs(path)
-					else
-						p = kit.outputFile path, data
-				when 'modify'
-					p = kit.outputFile path, data
+				when 'create', 'modify'
+					null
 				when 'move'
-					old_path = local_path(data.toString())
+					if conf.password and data.length > 0
+						data = kit.decrypt data, conf.password
+
+					old_path = local_path data.toString()
 					p = kit.move old_path, path.replace(/\/+$/, '')
 				when 'delete'
 					p = kit.remove path

@@ -31,19 +31,20 @@ module.exports = (conf, watch = true) ->
 		switch type
 			when 'create', 'modify'
 				if not is_dir file_path
-					p = p.then ->
-						kit.readFile file_path
-					.then (data) ->
-						rdata.reqData = data
+					rdata.reqPipe = kit.createReadStream file_path
+					crypto = kit.require 'crypto', __dirname
+					if conf.password
+						cipher = crypto.createCipher 'aes128', conf.password
+						rdata.reqPipe = rdata.reqPipe.pipe cipher
 			when 'move'
 				rdata.reqData = kit.path.join(
 					conf.remote_dir
 					old_path.replace(conf.local_dir, '').replace('/', '')
 				)
+				if conf.password
+					rdata.reqData = kit.encrypt rdata.reqData, conf.password
 
 		p = p.then ->
-			if conf.password and rdata.reqData?
-				rdata.reqData = kit.encrypt rdata.reqData, conf.password
 			kit.request rdata
 		.then (data) ->
 			if data == 'ok'

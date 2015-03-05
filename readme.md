@@ -114,7 +114,11 @@ server conf
   >
   > This tool ignores what IDE your different team members are using, the config file can be source controled. They don't have to waste time to decide what plugins is best for the job.
 
-- Https?
+- Why http, not tcp?
 
-  > I don't have any plan for it, for now simple symmetric cryto is enough for development. I want to keep it as simple as possible. If you need it, please open an issue.
+  > I want the custom sync protocol as simple as possible, the http header is just suit for the action and path part of my protocol. Performance is not the bottleneck.
+
+- SSL?
+
+  > I don't have any plan for it, for now simple symmetric cryto is enough for development. If you need it, please open an issue.
 
