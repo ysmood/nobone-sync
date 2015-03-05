@@ -4,11 +4,9 @@
 # This this the remote server.
 
 
-nobone = require 'nobone'
-http = require 'http'
-
-{ kit, service } = nobone()
+kit = require 'nokit'
 kit.require 'colors'
+http = require 'http'
 
 local_path = (path) ->
 	if process.platform == 'win32'
@@ -18,9 +16,8 @@ local_path = (path) ->
 
 
 module.exports = (conf) ->
-	service.post '/:type/:path', (req, res) ->
-		type = req.params.type
-		path = req.params.path
+	service = http.createServer (req, res) ->
+		[nil, type, path] = req.url.match /\/(\w+)\/(\w+)/i
 
 		if conf.password
 			path = new Buffer path, 'hex'
@@ -33,7 +30,8 @@ module.exports = (conf) ->
 			absPath = kit.path.normalize kit.path.resolve path
 			absRoot = kit.path.normalize kit.path.resolve conf.remote_dir
 			if absPath.indexOf(absRoot) != 0
-				return res.status(403).end http.STATUS_CODES[403]
+				res.statusCode = 403
+				return res.end http.STATUS_CODES[403]
 
 		kit.log "[server] ".grey + type.cyan + ': ' + path
 
@@ -49,7 +47,7 @@ module.exports = (conf) ->
 				data = Buffer.concat [data, chunk]
 			req
 
-		switch req.params.type
+		switch type
 			when 'create'
 				if path[-1..] == '/'
 					p = kit.mkdirs path
@@ -61,7 +59,7 @@ module.exports = (conf) ->
 		req.on 'end', ->
 			old_path = null
 
-			switch req.params.type
+			switch type
 				when 'create', 'modify'
 					null
 				when 'move'
@@ -73,16 +71,18 @@ module.exports = (conf) ->
 				when 'delete'
 					p = kit.remove path
 				else
-					res.status(403).end 'unknown_type'
+					res.statusCode = 403
+					res.end 'unknown_type'
 					return
 
 			p.then ->
 				kit.Promise.resolve conf.on_change?.call 0, type, path, old_path
 			.then ->
-				res.send 'ok'
+				res.end 'ok'
 			.catch (err) ->
 				kit.err err
-				res.status(500).end err.stack
+				res.statusCode = 500
+				res.end()
 
 	service.listen conf.port, ->
 		kit.log "Listen: ".cyan + conf.port

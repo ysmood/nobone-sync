@@ -1,4 +1,4 @@
-{ kit } = require 'nobone'
+kit = require 'nokit'
 kit.require 'colors'
 
 cmder = require 'commander'

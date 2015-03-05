@@ -1,6 +1,6 @@
 client = require '../client'
 server = require '../server'
-{ kit } = require 'nobone'
+kit = require 'nokit'
 { Promise } = kit
 kit.require 'colors'
 

@@ -2,7 +2,7 @@
 
 A simple remote file sync tool for development.
 
-It's also a simple example to show how [nobone](https://github.com/ysmood/nobone) works.
+It's also a simple example to show how [nokit](https://github.com/ysmood/nokit) works.
 
 [![NPM version](https://badge.fury.io/js/nobone-sync.svg)](http://badge.fury.io/js/nobone-sync) [![Build Status](https://travis-ci.org/ysmood/nobone-sync.svg)](https://travis-ci.org/ysmood/nobone-sync) [![Deps Up to Date](https://david-dm.org/ysmood/nobone-sync.svg?style=flat)](https://david-dm.org/ysmood/nobone-sync)
 

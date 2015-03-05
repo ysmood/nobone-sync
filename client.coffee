@@ -3,8 +3,7 @@
 #
 # This this the local watcher.
 
-nobone = require 'nobone'
-{ kit } = nobone
+kit = require 'nokit'
 kit.require 'colors'
 
 is_dir = (path)->
