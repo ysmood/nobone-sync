@@ -5,6 +5,7 @@
 
 
 nobone = require 'nobone'
+http = require 'http'
 
 { kit, service } = nobone()
 kit.require 'colors'
@@ -15,10 +16,24 @@ local_path = (path) ->
 	else
 		path.replace /\\/g, '\/'
 
+
 module.exports = (conf) ->
 	service.post '/:type/:path', (req, res) ->
 		type = req.params.type
-		path = local_path req.params.path
+		path = req.params.path
+
+		if conf.password
+			path = new Buffer path, 'hex'
+			path = kit.decrypt(path, conf.password).toString()
+
+		path = local_path path
+
+		# Check if the path is allowed
+		if conf.remote_dir
+			absPath = kit.path.normalize kit.path.resolve path
+			absRoot = kit.path.normalize kit.path.resolve conf.remote_dir
+			if absPath.indexOf(absRoot) != 0
+				return res.status(403).end http.STATUS_CODES[403]
 
 		kit.log "[server] ".grey + type.cyan + ': ' + path
 
@@ -28,6 +43,10 @@ module.exports = (conf) ->
 
 		req.on 'end', ->
 			old_path = null
+
+			if conf.password and data.length > 0
+				data = kit.decrypt data, conf.password
+
 			switch req.params.type
 				when 'create'
 					if path[-1..] == '/'

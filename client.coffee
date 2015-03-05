@@ -13,9 +13,16 @@ is_dir = (path)->
 module.exports = (conf, watch = true) ->
 	process.env.pollingWatch = conf.polling_interval
 
+	encodePath = (path) ->
+		if conf.password
+			kit.encrypt path, conf.password
+			.toString 'hex'
+		else
+			encodeURIComponent path
+
 	sendReq = (file_path, type, remote_path)->
 		rdata = {
-			url: "http://#{conf.host}:#{conf.port}/#{type}/#{encodeURIComponent remote_path}"
+			url: "http://#{conf.host}:#{conf.port}/#{type}/#{encodePath remote_path}"
 			method: 'POST'
 		}
 
@@ -35,6 +42,8 @@ module.exports = (conf, watch = true) ->
 				)
 
 		p = p.then ->
+			if conf.password and rdata.reqData?
+				rdata.reqData = kit.encrypt rdata.reqData, conf.password
 			kit.request rdata
 		.then (data) ->
 			if data == 'ok'

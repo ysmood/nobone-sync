@@ -1,6 +1,6 @@
 # nobone-sync
 
-A simple remote file sync tool for interal network.
+A simple remote file sync tool for development.
 
 It's also a simple example to show how [nobone](https://github.com/ysmood/nobone) works.
 
@@ -33,11 +33,16 @@ The defaults of `config.coffee` is:
 ```coffee
 module.exports =
     local_dir: 'local_dir'
+
+    # On client, it decides the root path to upload to.
+    # On server, it decides the root accessible path.
     remote_dir: 'remote_dir'
+
     host: '127.0.0.1'
     port: 8345
     pattern: '**'
     polling_interval: 500
+    password: null
     on_change: (type, path, old_path) ->
         # It can also return a promise.
         console.log('Write your custom code here')
@@ -67,6 +72,8 @@ For example:
 
 ### As Library
 
+Example:
+
 ```coffee
 client = require 'nobone-sync/client'
 server = require 'nobone-sync/server'
@@ -78,8 +85,8 @@ conf = {
     port: 8345
     pattern: '**'
     polling_interval: 500
+    password: '123456'
     on_change: (type, path, old_path) ->
-        # It can also return a promise.
         console.log('Write your custom code here')
 }
 
@@ -107,7 +114,7 @@ server conf
   >
   > This tool ignores what IDE your different team members are using, the config file can be source controled. They don't have to waste time to decide what plugins is best for the job.
 
-- Auth and https?
+- Https?
 
-  > For now it's only suit for a private network. I don't have any plan for security. I want to keep it simple and fast. If you need it, please open an issue.
+  > I don't have any plan for it, for now simple symmetric cryto is enough for development. I want to keep it as simple as possible. If you need it, please open an issue.
 

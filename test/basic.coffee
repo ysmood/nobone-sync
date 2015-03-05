@@ -13,6 +13,7 @@ conf = {
 	remote_dir: 'test/remote'
 	host: '127.0.0.1'
 	port: 8345
+	password: 'test'
 	pattern: ['**']
 	polling_interval: 30
 	on_change: (type, path, old_path) ->
@@ -32,8 +33,10 @@ conf = {
 }
 
 client conf
-server kit._.defaults { on_change: ->
-	new Promise (r) -> setTimeout r, 1
+server kit._.defaults {
+	remote_dir: 'test'
+	on_change: ->
+		new Promise (r) -> setTimeout r, 1
 }, conf
 
 setTimeout ->

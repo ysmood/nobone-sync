@@ -5,4 +5,5 @@ module.exports =
 	port: 8345
 	pattern: '**'
 	polling_interval: 500
+	password: null
 	on_change: (type, path, old_path) ->
