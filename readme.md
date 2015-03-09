@@ -43,7 +43,7 @@ module.exports =
     pattern: '**'
     polling_interval: 500
 
-    # If it is set, data will be encrypted with the algorithm.
+    # If it is set, transfer data will be encrypted with the algorithm.
     password: null
     algorithm: 'aes128'
 
