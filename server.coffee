@@ -40,26 +40,32 @@ module.exports = (conf) ->
 
 		p = kit.Promise.resolve()
 
-		reqStream = if conf.password
-			crypto = kit.require 'crypto', __dirname
-			decipher = crypto.createDecipher conf.algorithm, conf.password
-			req.pipe decipher
-		else
-			data = new Buffer 0
-			req.on 'data', (chunk) ->
-				data = Buffer.concat [data, chunk]
-			req
+		reqStream = null
+		getStream = ->
+			if conf.password
+				crypto = kit.require 'crypto', __dirname
+				decipher = crypto.createDecipher conf.algorithm, conf.password
+				req.pipe decipher
+			else
+				req
 
 		switch type
 			when 'create'
 				if path[-1..] == '/'
 					p = kit.mkdirs path
 				else
-					kit.mkdirs kit.path.dirname path
+					reqStream = getStream()
+					p = kit.mkdirs kit.path.dirname path
 					.then ->
 						reqStream.pipe kit.createWriteStream path, { mode }
 			when 'modify'
+				reqStream = getStream()
 				reqStream.pipe kit.createWriteStream path, { mode }
+
+		if not reqStream
+			data = new Buffer 0
+			req.on 'data', (chunk) ->
+				data = Buffer.concat [data, chunk]
 
 		req.on 'end', ->
 			old_path = null
@@ -82,7 +88,7 @@ module.exports = (conf) ->
 
 			p.then ->
 				kit.Promise.resolve(
-					conf.on_change?.call 0, type, path, old_path
+					conf.on_change?.call 0, type, path, old_path, mode
 				)
 			.then ->
 				res.end 'ok'

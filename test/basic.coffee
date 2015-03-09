@@ -7,6 +7,8 @@ kit.require 'colors'
 now = Date.now() + ''
 
 modifyPassed = false
+createPassed = false
+deletePassed = false
 
 conf = {
 	local_dir: 'test/local'
@@ -16,21 +18,30 @@ conf = {
 	password: 'test'
 	pattern: ['**']
 	polling_interval: 30
-	on_change: (type, path, old_path) ->
+	on_change: (type, path, old_path, stats) ->
 		if path == 'test/local/b.css'
 			if type == 'modify'
 				modifyPassed = true
 
-		if path == 'test/local/dir/a.txt'
+		if path == 'test/local/d'
 			setTimeout ->
-				s = kit.readFileSync 'test/remote/dir/a.txt', 'utf8'
-				if modifyPassed and s == now
+				deletePassed = not kit.existsSync 'test/remote/d'
+			, 100
+
+		if path == 'test/local/dir/path/a.txt'
+			setTimeout ->
+				s = kit.readFileSync 'test/remote/dir/path/a.txt', 'utf8'
+				createPassed = s == now
+				if modifyPassed and deletePassed and createPassed
 					process.exit 0
 				else
 					kit.err 'Sync does not work!'.red
 					process.exit 1
 			, 500
 }
+
+kit.touchSync 'test/local/d'
+kit.touchSync 'test/remote/d'
 
 client conf
 server kit._.defaults {
@@ -44,9 +55,14 @@ setTimeout ->
 , 400
 
 setTimeout ->
-	kit.outputFileSync 'test/local/dir/a.txt', now
+	kit.removeSync 'test/local/d'
 , 500
 
+setTimeout ->
+	kit.outputFileSync 'test/local/dir/path/a.txt', now, { mode: 0o700 }
+, 600
+
 process.on 'exit', ->
-	kit.removeSync 'test/local/dir/a.txt'
-	kit.removeSync 'test/remote/dir/a.txt'
+	kit.removeSync 'test/local/dir/path'
+	kit.removeSync 'test/remote/dir/path'
+	kit.removeSync 'test/local/d'
