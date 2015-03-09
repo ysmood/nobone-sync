@@ -22,7 +22,7 @@ module.exports = (conf, watch = true) ->
 		else
 			encodeURIComponent str
 
-	sendReq = (file_path, type, remote_path) ->
+	sendReq = (file_path, type, remote_path, old_path, stats) ->
 		operationInfo = { type, path: remote_path }
 		rdata = {
 			url: "http://#{conf.host}:#{conf.port}/"
@@ -34,6 +34,7 @@ module.exports = (conf, watch = true) ->
 		switch type
 			when 'create', 'modify'
 				if not is_dir file_path
+					operationInfo.mode = stats.mode
 					rdata.reqPipe = kit.createReadStream file_path
 					crypto = kit.require 'crypto', __dirname
 					if conf.password
@@ -59,7 +60,7 @@ module.exports = (conf, watch = true) ->
 		.catch (err) ->
 			kit.log err.stack.red
 
-	watch_handler = (type, path, old_path) ->
+	watch_handler = (type, path, old_path, stats) ->
 		kit.log type.cyan + ': ' + path +
 			(if old_path then ' <- '.cyan + old_path else '')
 
@@ -69,9 +70,9 @@ module.exports = (conf, watch = true) ->
 				if is_dir(path) then '/' else ''
 			)
 
-		sendReq path, type, remote_path
+		sendReq path, type, remote_path, old_path, stats
 		.then ->
-			conf.on_change?.call 0, type, path, old_path
+			conf.on_change?.call 0, type, path, old_path, stats
 
 	push = (path)->
 		file_name = if conf.base_dir then kit.path.relative conf.base_dir, path else kit.path.basename path

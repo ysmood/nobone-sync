@@ -24,7 +24,7 @@ module.exports = (conf) ->
 			decodeURIComponent str
 
 	service = http.createServer (req, res) ->
-		{ type, path } = decodeInfo req.url[1..]
+		{ type, path, mode } = decodeInfo req.url[1..]
 
 		path = local_path path
 
@@ -55,9 +55,11 @@ module.exports = (conf) ->
 				if path[-1..] == '/'
 					p = kit.mkdirs path
 				else
-					reqStream = reqStream.pipe kit.createWriteStream path
+					kit.mkdirs kit.path.dirname path
+					.then ->
+						reqStream.pipe kit.createWriteStream path, { mode }
 			when 'modify'
-				reqStream = reqStream.pipe kit.createWriteStream path
+				reqStream.pipe kit.createWriteStream path, { mode }
 
 		req.on 'end', ->
 			old_path = null
