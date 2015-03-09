@@ -8,7 +8,7 @@ kit = require 'nokit'
 kit.require 'colors'
 http = require 'http'
 
-local_path = (path) ->
+localPath = (path) ->
 	if process.platform == 'win32'
 		path.replace /\//g, '\\'
 	else
@@ -26,12 +26,12 @@ module.exports = (conf) ->
 	service = http.createServer (req, res) ->
 		{ type, path, mode } = decodeInfo req.url[1..]
 
-		path = local_path path
+		path = localPath path
 
 		# Check if the path is allowed
-		if conf.remote_dir
+		if conf.remoteDir
 			absPath = kit.path.normalize kit.path.resolve path
-			absRoot = kit.path.normalize kit.path.resolve conf.remote_dir
+			absRoot = kit.path.normalize kit.path.resolve conf.remoteDir
 			if absPath.indexOf(absRoot) != 0
 				res.statusCode = 403
 				return res.end http.STATUS_CODES[403]
@@ -68,7 +68,7 @@ module.exports = (conf) ->
 				data = Buffer.concat [data, chunk]
 
 		req.on 'end', ->
-			old_path = null
+			oldPath = null
 
 			switch type
 				when 'create', 'modify'
@@ -77,8 +77,8 @@ module.exports = (conf) ->
 					if conf.password and data.length > 0
 						data = kit.decrypt data, conf.password, conf.algorithm
 
-					old_path = local_path data.toString()
-					p = kit.move old_path, path.replace(/\/+$/, '')
+					oldPath = localPath data.toString()
+					p = kit.move oldPath, path.replace(/\/+$/, '')
 				when 'delete'
 					p = kit.remove path
 				else
@@ -88,7 +88,7 @@ module.exports = (conf) ->
 
 			p.then ->
 				kit.Promise.resolve(
-					conf.on_change?.call 0, type, path, old_path, mode
+					conf.onChange?.call 0, type, path, oldPath, mode
 				)
 			.then ->
 				res.end 'ok'

@@ -6,13 +6,13 @@
 kit = require 'nokit'
 kit.require 'colors'
 
-is_dir = (path)->
+isDir = (path)->
 	path[-1..] == '/'
 
 module.exports = (conf, watch = true) ->
 	kit._.defaults conf, require('./config.default')
 
-	process.env.pollingWatch = conf.polling_interval
+	process.env.pollingWatch = conf.pollingInterval
 
 	encodeInfo = (info) ->
 		str = JSON.stringify info
@@ -22,8 +22,8 @@ module.exports = (conf, watch = true) ->
 		else
 			encodeURIComponent str
 
-	sendReq = (file_path, type, remote_path, old_path, stats) ->
-		operationInfo = { type, path: remote_path }
+	sendReq = (filePath, type, remotePath, oldPath, stats) ->
+		operationInfo = { type, path: remotePath }
 		rdata = {
 			url: "http://#{conf.host}:#{conf.port}/"
 			method: 'POST'
@@ -33,17 +33,17 @@ module.exports = (conf, watch = true) ->
 
 		switch type
 			when 'create', 'modify'
-				if not is_dir file_path
+				if not isDir filePath
 					operationInfo.mode = stats.mode
-					rdata.reqPipe = kit.createReadStream file_path
+					rdata.reqPipe = kit.createReadStream filePath
 					crypto = kit.require 'crypto', __dirname
 					if conf.password
 						cipher = crypto.createCipher 'aes128', conf.password
 						rdata.reqPipe = rdata.reqPipe.pipe cipher
 			when 'move'
 				rdata.reqData = kit.path.join(
-					conf.remote_dir
-					old_path.replace(conf.local_dir, '').replace('/', '')
+					conf.remoteDir
+					oldPath.replace(conf.localDir, '').replace('/', '')
 				)
 				if conf.password
 					rdata.reqData = kit.encrypt rdata.reqData,
@@ -54,54 +54,54 @@ module.exports = (conf, watch = true) ->
 			kit.request rdata
 		.then (data) ->
 			if data == 'ok'
-				kit.log 'Synced: '.green + file_path
+				kit.log 'Synced: '.green + filePath
 			else
 				kit.log data
 		.catch (err) ->
 			kit.log err.stack.red
 
-	watch_handler = (type, path, old_path, stats) ->
+	watchHandler = (type, path, oldPath, stats) ->
 		kit.log type.cyan + ': ' + path +
-			(if old_path then ' <- '.cyan + old_path else '')
+			(if oldPath then ' <- '.cyan + oldPath else '')
 
-		remote_path = kit.path.join(
-				conf.remote_dir
-				kit.path.relative(conf.local_dir, path)
-				if is_dir(path) then '/' else ''
+		remotePath = kit.path.join(
+				conf.remoteDir
+				kit.path.relative(conf.localDir, path)
+				if isDir(path) then '/' else ''
 			)
 
-		sendReq path, type, remote_path, old_path, stats
+		sendReq path, type, remotePath, oldPath, stats
 		.then ->
-			conf.on_change?.call 0, type, path, old_path, stats
+			conf.onChange?.call 0, type, path, oldPath, stats
 
 	push = (path)->
-		file_name = if conf.base_dir then kit.path.relative conf.base_dir, path else kit.path.basename path
+		fileName = if conf.baseDir then kit.path.relative conf.baseDir, path else kit.path.basename path
 
-		remote_path = kit.path.join conf.remote_dir, file_name
+		remotePath = kit.path.join conf.remoteDir, fileName
 
-		kit.log "Uploading file: ".green + file_name + ' to '.green + remote_path
+		kit.log "Uploading file: ".green + fileName + ' to '.green + remotePath
 
-		sendReq path, 'create', remote_path
+		sendReq path, 'create', remotePath
 
 	if watch
-		kit.watchDir conf.local_dir, {
+		kit.watchDir conf.localDir, {
 			patterns: conf.pattern
-			handler: watch_handler
+			handler: watchHandler
 		}
 		.then (list) ->
 			kit.log 'Watched: '.cyan + kit._.keys(list).length
 		.catch (err) ->
 			kit.log err.stack.red
 	else
-		conf.glob = conf.local_dir
-		kit.lstat conf.local_dir
+		conf.glob = conf.localDir
+		kit.lstat conf.localDir
 		.then (stat)->
 			if stat.isDirectory()
-				conf.base_dir = kit.path.dirname conf.local_dir
-				if conf.local_dir.slice(-1) is '/'
-					conf.glob = conf.local_dir + '**/*'
+				conf.baseDir = kit.path.dirname conf.localDir
+				if conf.localDir.slice(-1) is '/'
+					conf.glob = conf.localDir + '**/*'
 				else
-					conf.glob = conf.local_dir + '/**/*'
+					conf.glob = conf.localDir + '/**/*'
 		, (err)->
 			kit.Promise.resolve()
 		.then ->

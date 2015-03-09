@@ -12,14 +12,14 @@ deletePassed = false
 statsPassed = false
 
 conf = {
-	local_dir: 'test/local'
-	remote_dir: 'test/remote'
+	localDir: 'test/local'
+	remoteDir: 'test/remote'
 	host: '127.0.0.1'
 	port: 8345
 	password: 'test'
 	pattern: ['**']
-	polling_interval: 30
-	on_change: (type, path, old_path, stats) ->
+	pollingInterval: 30
+	onChange: (type, path, oldPath, stats) ->
 		if path == 'test/local/b.css'
 			if type == 'modify'
 				modifyPassed = true
@@ -49,8 +49,8 @@ kit.touchSync 'test/remote/d'
 
 client conf
 server kit._.defaults {
-	remote_dir: 'test'
-	on_change: ->
+	remoteDir: 'test'
+	onChange: ->
 		new Promise (r) -> setTimeout r, 1
 }, conf
 

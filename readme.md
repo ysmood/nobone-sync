@@ -32,22 +32,22 @@ The defaults of `config.coffee` is:
 
 ```coffee
 module.exports =
-    local_dir: 'local_dir'
+    localDir: 'localDir'
 
     # On client, it decides the root path to upload to.
     # On server, it decides the root accessible path.
-    remote_dir: 'remote_dir'
+    remoteDir: 'remoteDir'
 
     host: '127.0.0.1'
     port: 8345
     pattern: '**'
-    polling_interval: 500
+    pollingInterval: 500
 
     # If it is set, transfer data will be encrypted with the algorithm.
     password: null
     algorithm: 'aes128'
 
-    on_change: (type, path, old_path) ->
+    onChange: (type, path, oldPath) ->
         # It can also return a promise.
         console.log('Write your custom code here')
 ```
@@ -59,15 +59,15 @@ Some basic usages:
 - To only watch `js`, `css` and `jpg`: `'**/*.@(js|css|jpg)'`
 - To ignore `js` and `css` file: `['**', '!**/*.@(js|css)']`
 
-Use larger polling_interval if there are too many files to be watched.
+Use larger pollingInterval if there are too many files to be watched.
 
 #### Push a Path to Remote
 
 Push a file or directory to remote server
 
-    nobone-sync -u local_path host[:port]/path/to/dir
+    nobone-sync -u localPath host[:port]/path/to/dir
 
-> local_path can be a file, a directory, or a glob pattern(glob pattern should use with quotation marks).
+> localPath can be a file, a directory, or a glob pattern(glob pattern should use with quotation marks).
 
 For example:
 
@@ -85,14 +85,14 @@ client = require 'nobone-sync/client'
 server = require 'nobone-sync/server'
 
 conf = {
-    local_dir: 'local_dir'
-    remote_dir: 'remote_dir'
+    localDir: 'localDir'
+    remoteDir: 'remoteDir'
     host: '127.0.0.1'
     port: 8345
     pattern: '**'
-    polling_interval: 500
+    pollingInterval: 500
     password: '123456'
-    on_change: (type, path, old_path) ->
+    onChange: (type, path, oldPath) ->
         console.log('Write your custom code here')
 }
 

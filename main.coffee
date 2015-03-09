@@ -5,7 +5,7 @@ cmder = require 'commander'
 
 cmder.option '-h, --help', 'Help', -> cmder.help()
 cmder.option '-s, --server'
-cmder.option '-u, --upload <local_file host[:port]/path/to/dir>', 'Upload file or directory to remote host.'
+cmder.option '-u, --upload <localFile host[:port]/path/to/dir>', 'Upload file or directory to remote host.'
 
 cmder.parse process.argv
 if cmder.upload
@@ -13,7 +13,7 @@ if cmder.upload
 		conf = {}
 
 		file = cmder.upload
-		file and conf.local_dir = file
+		file and conf.localDir = file
 
 		remote = /([^\/:]+)(:\d+)?\/(.*)/.exec cmder.args[0]
 
@@ -24,7 +24,7 @@ if cmder.upload
 		conf.host = remote[1] or ''
 		port = remote[2] or ':8345'
 		conf.port = port[1...]
-		conf.remote_dir = "/" + remote[3]
+		conf.remoteDir = "/" + remote[3]
 
 		require('./client') conf, false
 	else if cmder.args.length isnt 0
