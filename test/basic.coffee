@@ -32,7 +32,8 @@ conf = {
 		if path == 'test/local/dir/path/a.txt'
 			setTimeout ->
 				s = kit.readFileSync 'test/remote/dir/path/a.txt', 'utf8'
-				statsPassed = kit.statSync('test/remote/dir/path/a.txt').mode == 33261
+				statsPassed = kit.statSync('test/remote/dir/path/a.txt')
+					.mode.toString(8)[3] == '7'
 				createPassed = s == now
 				kit.log [modifyPassed, deletePassed, createPassed, statsPassed]
 				if modifyPassed and deletePassed and createPassed and statsPassed
