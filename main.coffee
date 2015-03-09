@@ -30,13 +30,15 @@ if cmder.upload
 	else if cmder.args.length isnt 0
 		kit.err "Wrong args number, 2 wanted"
 else
-
 	try
 		conf = require kit.path.resolve(cmder.args[1] or cmder.args[0])
 	catch err
-		kit.err err.toString()
-		kit.log 'Config error, use default config.'.yellow
-		conf = {}
+		if cmder.args.length > 0
+			kit.err err.stack
+			process.exit 1
+		else
+			kit.log 'No config specified, use default.'.yellow
+			conf = {}
 
 	if cmder.server
 		app = require './server'
