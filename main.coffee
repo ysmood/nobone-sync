@@ -37,7 +37,6 @@ else
 		kit.err err.toString()
 		kit.log 'Config error, use default config.'.yellow
 		conf = {}
-	kit._.defaults conf, require('./config.default')
 
 	if cmder.server
 		app = require './server'

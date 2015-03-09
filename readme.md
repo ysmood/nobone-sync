@@ -43,8 +43,9 @@ module.exports =
     pattern: '**'
     polling_interval: 500
 
-    # If it is set, data will be encrypted with aes128.
+    # If it is set, data will be encrypted with the algorithm.
     password: null
+    algorithm: 'aes128'
 
     on_change: (type, path, old_path) ->
         # It can also return a promise.
@@ -98,6 +99,39 @@ conf = {
 client conf
 server conf
 ```
+
+## Protocol
+
+The transfer protocol is based on http.
+Only the `{info}` and `{data}` is used.
+
+### Format
+
+```
+POST /{info} HTTP/1.1
+
+{data}
+```
+
+- `info`
+
+  It's a URI encoded json string. For example, the json is
+
+  `{ type: 'create', path: '/home/u/a/b.js', mode: 0o777 }`,
+
+  then the final info string should be
+
+  `%7B%22type%22%3A%22create%22%2C%22path%22%3A%22%2Fhome%2Fu%2Fa%2Fb.js%22%2C%22mode%22%3A511%7D`.
+
+- `data`
+
+  It's raw binary. When the `type` is `move`, it should the target remote path.
+  When the `type` is `create` or `modify`, it should be binary file content. In other cases, it will be ignored.
+
+- `error`
+
+  If operation failed the server will return http status code 403, 404 or 500.
+
 
 ## FAQ
 

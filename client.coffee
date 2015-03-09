@@ -10,18 +10,22 @@ is_dir = (path)->
 	path[-1..] == '/'
 
 module.exports = (conf, watch = true) ->
+	kit._.defaults conf, require('./config.default')
+
 	process.env.pollingWatch = conf.polling_interval
 
-	encodePath = (path) ->
+	encodeInfo = (info) ->
+		str = JSON.stringify info
 		if conf.password
-			kit.encrypt path, conf.password
+			kit.encrypt str, conf.password, conf.algorithm
 			.toString 'hex'
 		else
-			encodeURIComponent path
+			encodeURIComponent str
 
-	sendReq = (file_path, type, remote_path)->
+	sendReq = (file_path, type, remote_path) ->
+		operationInfo = { type, path: remote_path }
 		rdata = {
-			url: "http://#{conf.host}:#{conf.port}/#{type}/#{encodePath remote_path}"
+			url: "http://#{conf.host}:#{conf.port}/"
 			method: 'POST'
 		}
 
@@ -41,9 +45,11 @@ module.exports = (conf, watch = true) ->
 					old_path.replace(conf.local_dir, '').replace('/', '')
 				)
 				if conf.password
-					rdata.reqData = kit.encrypt rdata.reqData, conf.password
+					rdata.reqData = kit.encrypt rdata.reqData,
+						conf.password, conf.algorithm
 
 		p = p.then ->
+			rdata.url += encodeInfo operationInfo
 			kit.request rdata
 		.then (data) ->
 			if data == 'ok'

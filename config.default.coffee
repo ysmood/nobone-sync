@@ -6,4 +6,5 @@ module.exports =
 	pattern: '**'
 	polling_interval: 500
 	password: null
+	algorithm: 'aes128'
 	on_change: (type, path, old_path) ->

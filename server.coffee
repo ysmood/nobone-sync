@@ -14,14 +14,17 @@ local_path = (path) ->
 	else
 		path.replace /\\/g, '\/'
 
-
 module.exports = (conf) ->
-	service = http.createServer (req, res) ->
-		[nil, type, path] = req.url.match /\/(\w+)\/(\w+)/i
+	kit._.defaults conf, require('./config.default')
 
-		if conf.password
-			path = new Buffer path, 'hex'
-			path = kit.decrypt(path, conf.password).toString()
+	decodeInfo = (str) ->
+		JSON.parse if conf.password
+			kit.decrypt new Buffer(str, 'hex'), conf.password, conf.algorithm
+		else
+			decodeURIComponent str
+
+	service = http.createServer (req, res) ->
+		{ type, path } = decodeInfo req.url[1..]
 
 		path = local_path path
 
@@ -39,7 +42,7 @@ module.exports = (conf) ->
 
 		reqStream = if conf.password
 			crypto = kit.require 'crypto', __dirname
-			decipher = crypto.createDecipher 'aes128', conf.password
+			decipher = crypto.createDecipher conf.algorithm, conf.password
 			req.pipe decipher
 		else
 			data = new Buffer 0
@@ -64,25 +67,27 @@ module.exports = (conf) ->
 					null
 				when 'move'
 					if conf.password and data.length > 0
-						data = kit.decrypt data, conf.password
+						data = kit.decrypt data, conf.password, conf.algorithm
 
 					old_path = local_path data.toString()
 					p = kit.move old_path, path.replace(/\/+$/, '')
 				when 'delete'
 					p = kit.remove path
 				else
-					res.statusCode = 403
-					res.end 'unknown_type'
+					res.statusCode = 404
+					res.end 'Unknown Change Type'
 					return
 
 			p.then ->
-				kit.Promise.resolve conf.on_change?.call 0, type, path, old_path
+				kit.Promise.resolve(
+					conf.on_change?.call 0, type, path, old_path
+				)
 			.then ->
 				res.end 'ok'
 			.catch (err) ->
 				kit.err err
 				res.statusCode = 500
-				res.end()
+				res.end http.STATUS_CODES[500]
 
 	service.listen conf.port, ->
 		kit.log "Listen: ".cyan + conf.port
