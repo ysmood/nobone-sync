@@ -9,6 +9,7 @@ now = Date.now() + ''
 modifyPassed = false
 createPassed = false
 deletePassed = false
+statsPassed = false
 
 conf = {
 	local_dir: 'test/local'
@@ -31,8 +32,9 @@ conf = {
 		if path == 'test/local/dir/path/a.txt'
 			setTimeout ->
 				s = kit.readFileSync 'test/remote/dir/path/a.txt', 'utf8'
+				statsPassed = kit.statSync('test/remote/dir/path/a.txt').mode == 33261
 				createPassed = s == now
-				if modifyPassed and deletePassed and createPassed
+				if modifyPassed and deletePassed and createPassed and statsPassed
 					process.exit 0
 				else
 					kit.err 'Sync does not work!'.red
@@ -59,7 +61,7 @@ setTimeout ->
 , 500
 
 setTimeout ->
-	kit.outputFileSync 'test/local/dir/path/a.txt', now, { mode: 0o700 }
+	kit.outputFileSync 'test/local/dir/path/a.txt', now, { mode: 0o777 }
 , 600
 
 process.on 'exit', ->
