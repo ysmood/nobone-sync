@@ -29,9 +29,9 @@ module.exports = (conf) ->
 		path = localPath path
 
 		# Check if the path is allowed
-		if conf.remoteDir
+		if conf.rootAllowed
 			absPath = kit.path.normalize kit.path.resolve path
-			absRoot = kit.path.normalize kit.path.resolve conf.remoteDir
+			absRoot = kit.path.normalize kit.path.resolve conf.rootAllowed
 			if absPath.indexOf(absRoot) != 0
 				res.statusCode = 403
 				return res.end http.STATUS_CODES[403]

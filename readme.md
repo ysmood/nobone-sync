@@ -34,9 +34,11 @@ The defaults of `config.coffee` is:
 module.exports =
     localDir: 'localDir'
 
-    # On client, it decides the root path to upload to.
-    # On server, it decides the root accessible path.
+    # It decides the root path to upload to.
     remoteDir: 'remoteDir'
+
+    # It decides the root accessible path.
+    rootAllowed: '/'
 
     host: '127.0.0.1'
     port: 8345
@@ -87,6 +89,7 @@ server = require 'nobone-sync/server'
 conf = {
     localDir: 'localDir'
     remoteDir: 'remoteDir'
+    rootAllowed: 'remoteDir'
     host: '127.0.0.1'
     port: 8345
     pattern: '**'
@@ -128,10 +131,13 @@ POST /{info} HTTP/1.1
   It's raw binary. When the `type` is `move`, it should the target remote path.
   When the `type` is `create` or `modify`, it should be binary file content. In other cases, it will be ignored.
 
+- `encryption`
+
+  If the password and algorithm is specified, the `info` and the `data` should encrypted by them.
+
 - `error`
 
   If operation failed the server will return http status code 403, 404 or 500.
-
 
 ## FAQ
 

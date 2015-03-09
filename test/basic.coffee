@@ -49,7 +49,6 @@ kit.touchSync 'test/remote/d'
 
 client conf
 server kit._.defaults {
-	remoteDir: 'test'
 	onChange: ->
 		new Promise (r) -> setTimeout r, 1
 }, conf
