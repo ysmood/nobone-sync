@@ -61,11 +61,11 @@ Some basic usages:
 - To only watch `js`, `css` and `jpg`: `'**/*.@(js|css|jpg)'`
 - To ignore `js` and `css` file: `['**', '!**/*.@(js|css)']`
 
-Use larger pollingInterval if there are too many files to be watched.
+Use larger `pollingInterval` if there are too many files to be watched.
 
 #### Push a Path to Remote
 
-Push a file or directory to remote server
+Push a file or directory to remote server:
 
     nobone-sync -u localPath host[:port]/path/to/dir
 
