@@ -24,7 +24,11 @@ module.exports = (conf) ->
 			decodeURIComponent str
 
 	service = http.createServer (req, res) ->
-		{ type, path, mode } = decodeInfo req.url[1..]
+		try
+			{ type, path, mode } = decodeInfo req.url[1..]
+		catch err
+			res.statusCode = 400
+			return res.end http.STATUS_CODES[400]
 
 		path = localPath path
 
