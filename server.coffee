@@ -24,11 +24,16 @@ module.exports = (conf) ->
 			decodeURIComponent str
 
 	service = http.createServer (req, res) ->
+
+		httpError = (code, err) ->
+			kit.err err.stack or err
+			res.statusCode = 500
+			res.end http.STATUS_CODES[500]
+
 		try
 			{ type, path, mode } = decodeInfo req.url[1..]
 		catch err
-			res.statusCode = 400
-			return res.end http.STATUS_CODES[400]
+			return httpError 400, err
 
 		path = localPath path
 
@@ -37,8 +42,7 @@ module.exports = (conf) ->
 			absPath = kit.path.normalize kit.path.resolve path
 			absRoot = kit.path.normalize kit.path.resolve conf.rootAllowed
 			if absPath.indexOf(absRoot) != 0
-				res.statusCode = 403
-				return res.end http.STATUS_CODES[403]
+				return httpError 403, err
 
 		kit.log "[server] ".grey + type.cyan + ': ' + path
 
@@ -53,23 +57,30 @@ module.exports = (conf) ->
 			else
 				req
 
+		pipeToFile = ->
+			reqStream = getStream()
+			kit.mkdirs kit.path.dirname path
+			.then ->
+				f = kit.createWriteStream path, { mode }
+				f.on 'error', (err) ->
+					p = kit.Promise.reject err
+				reqStream.pipe f
+
 		switch type
 			when 'create'
 				if path[-1..] == '/'
 					p = kit.mkdirs path
 				else
-					reqStream = getStream()
-					p = kit.mkdirs kit.path.dirname path
-					.then ->
-						reqStream.pipe kit.createWriteStream path, { mode }
+					p = pipeToFile()
 			when 'modify'
-				reqStream = getStream()
-				reqStream.pipe kit.createWriteStream path, { mode }
+				p = pipeToFile()
 
 		if not reqStream
 			data = new Buffer 0
 			req.on 'data', (chunk) ->
 				data = Buffer.concat [data, chunk]
+
+		req.on 'error', (err) -> p = kit.Promise.reject err
 
 		req.on 'end', ->
 			oldPath = null
@@ -86,9 +97,7 @@ module.exports = (conf) ->
 				when 'delete'
 					p = kit.remove path
 				else
-					res.statusCode = 404
-					res.end 'Unknown Change Type'
-					return
+					return httpError 404, new Error('Unknown Change Type')
 
 			p.then ->
 				kit.Promise.resolve(
@@ -97,9 +106,7 @@ module.exports = (conf) ->
 			.then ->
 				res.end 'ok'
 			.catch (err) ->
-				kit.err err
-				res.statusCode = 500
-				res.end http.STATUS_CODES[500]
+				return httpError 500, err
 
 	service.listen conf.port, ->
 		kit.log "Listen: ".cyan + conf.port
