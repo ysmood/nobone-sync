@@ -11,7 +11,7 @@
   },
   "scripts": {
     "no": "no",
-    "test": "no test/basic.coffee"
+    "test": "no test"
   },
   "repository": {
     "type": "git",
@@ -31,13 +31,11 @@
   "homepage": "https://github.com/ysmood/nobone-sync",
   "dependencies": {
     "commander": "2.7.1",
-    "nokit": "0.5.8"
+    "nokit": "0.5.8",
+    "coffee-script": "1.9.1"
   },
   "files": [
     "bin",
     "*.js"
-  ],
-  "devDependencies": {
-    "coffee-script": "1.9.1"
-  }
+  ]
 }

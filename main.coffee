@@ -31,6 +31,7 @@ if cmder.upload
 		kit.err "Wrong args number, 2 wanted"
 else
 	try
+		require 'coffee-script/register'
 		conf = require kit.path.resolve(cmder.args[1] or cmder.args[0])
 	catch err
 		if cmder.args.length > 0
