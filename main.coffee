@@ -6,6 +6,8 @@ cmder = require 'commander'
 cmder.option '-h, --help', 'Help', -> cmder.help()
 cmder.option '-s, --server'
 cmder.option '-u, --upload <localFile host[:port]/path/to/dir>', 'Upload file or directory to remote host.'
+cmder.option '-p, --password <pwd>', 'Password.'
+cmder.option '-a, --algorithm <alg>', 'Algorithm', 'aes128'
 
 cmder.parse process.argv
 if cmder.upload
@@ -25,6 +27,8 @@ if cmder.upload
 		port = remote[2] or ':8345'
 		conf.port = port[1...]
 		conf.remoteDir = "/" + remote[3]
+		conf.password = cmder.password
+		conf.algorithm = cmder.algorithm
 
 		require('./client') conf, false
 	else if cmder.args.length isnt 0

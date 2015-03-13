@@ -27,8 +27,8 @@ module.exports = (conf) ->
 
 		httpError = (code, err) ->
 			kit.err err.stack or err
-			res.statusCode = 500
-			res.end http.STATUS_CODES[500]
+			res.statusCode = code
+			res.end http.STATUS_CODES[code]
 
 		try
 			{ type, path, mode } = decodeInfo req.url[1..]

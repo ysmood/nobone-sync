@@ -74,14 +74,14 @@ module.exports = (conf, watch = true) ->
 		.then ->
 			conf.onChange?.call 0, type, path, oldPath, stats
 
-	push = (path)->
+	push = (path, stats) ->
 		fileName = if conf.baseDir then kit.path.relative conf.baseDir, path else kit.path.basename path
 
 		remotePath = kit.path.join conf.remoteDir, fileName
 
 		kit.log "Uploading file: ".green + fileName + ' to '.green + remotePath
 
-		sendReq path, 'create', remotePath
+		sendReq path, 'create', remotePath, null, stats
 
 	if watch
 		kit.watchDir conf.localDir, {
@@ -108,5 +108,5 @@ module.exports = (conf, watch = true) ->
 			kit.glob conf.glob,
 				nodir: true
 				dot: true
-		.then (paths)->
-			paths.forEach push
+				iter: (info) ->
+					push info.path, info.stats
