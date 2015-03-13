@@ -11,7 +11,8 @@
   },
   "scripts": {
     "no": "no",
-    "test": "no test"
+    "test": "no test",
+    "prepublish": "no build"
   },
   "repository": {
     "type": "git",
