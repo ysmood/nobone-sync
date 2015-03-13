@@ -77,6 +77,8 @@ For example:
 
     nobone-sync -u 'src/js/*.js' 1.2.3.4:8222/home/me/src/js
 
+    nobone-sync --password 3.14 -u 'src/js/*.js' 1.2.3.4:8222/home/me/src/js
+
 
 ### As Library
 
