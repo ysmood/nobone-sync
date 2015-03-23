@@ -118,7 +118,10 @@ client.send {
     conf: conf
     type: 'execute'
     remotePath: '.coffee'
-    source: ''' console.log 'OK' '''
+
+    # The source code will run under the same directory of nobone-sync.
+    # You can require all the dependencies of nobone-sync.
+    source: ''' require('nokit').log 'OK' '''
 }
 .then (out) ->
     console.log out

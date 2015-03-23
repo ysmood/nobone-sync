@@ -63,10 +63,12 @@ setTimeout ->
 		conf: conf
 		remotePath: '.coffee'
 		type: 'execute'
-		source: ''' console.log 'OK' '''
+		source: '''
+		require('nokit').log 'OK'
+		'''
 	}
 	.then (out) ->
-		executePassed = out.toString() == 'OK\n'
+		executePassed = out.toString().indexOf('OK') > 0
 , 100
 
 setTimeout ->
