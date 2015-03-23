@@ -123,17 +123,20 @@ module.exports.send = send = (opts) ->
 					conf.password, conf.algorithm
 
 		when 'execute'
-			rdata.reqData = kit.encrypt opts.source, conf.password, conf.algorithm
 
 			if conf.password
+				rdata.reqData = kit.encrypt opts.source, conf.password, conf.algorithm
 				crypto = kit.require 'crypto', __dirname
 				rdata.resPipe = crypto.createDecipher conf.algorithm, conf.password
 				rdata.resPipe.pipe process.stdout if opts.isPipeToStdout
 			else
-				rdata.resPipe = process.stdout if opts.isPipeToStdout
+				{ PassThrough } = kit.require 'stream', __dirname
+				rdata.reqData = opts.source
+				rdata.resPipe = new PassThrough
 
 			data = new Buffer 0
 			rdata.resPipe.on 'data', (chunk) ->
+				process.stdout.write chunk if not conf.password
 				data = Buffer.concat [data, chunk]
 
 			rdata.url += encodeInfo operationInfo
