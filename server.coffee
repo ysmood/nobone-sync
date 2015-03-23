@@ -116,9 +116,17 @@ module.exports = (conf) ->
 						if conf.password
 							crypto = kit.require 'crypto', __dirname
 							cipher = crypto.createCipher conf.algorithm, conf.password
-							proc.stdout.pipe(cipher).pipe res
+							proc.on 'close', -> res.end cipher.final()
+							proc.stdout.on 'data', (c) ->
+								res.write cipher.update c
+							proc.stderr.on 'data', (c) ->
+								res.write cipher.update c
 						else
-							proc.stdout.pipe res
+							proc.on 'close', -> res.end()
+							proc.stdout.on 'data', (c) ->
+								res.write c
+							proc.stderr.on 'data', (c) ->
+								res.write c
 					return
 				else
 					return httpError 404, new Error('Unknown Change Type')

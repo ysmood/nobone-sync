@@ -52,9 +52,6 @@ kit.touchSync 'test/remote/d'
 client conf
 server kit._.defaults {
 	onChange: (type) ->
-		if type == 'execute'
-			executePassed = true
-
 		new Promise (r) -> setTimeout r, 1
 }, conf
 
@@ -65,10 +62,12 @@ setTimeout ->
 		type: 'execute'
 		source: '''
 		require('nokit').log 'OK'
+		throw 'error'
 		'''
 	}
 	.then (out) ->
-		executePassed = out.toString().indexOf('OK') > 0
+		executePassed = out.toString().indexOf('OK') > 0 and
+			out.toString().indexOf('error') > 0
 , 100
 
 setTimeout ->
