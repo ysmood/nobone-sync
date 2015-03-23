@@ -88,14 +88,35 @@ module.exports = (conf) ->
 			switch type
 				when 'create', 'modify'
 					null
+
 				when 'move'
 					if conf.password and data.length > 0
 						data = kit.decrypt data, conf.password, conf.algorithm
 
 					oldPath = localPath data.toString()
 					p = kit.move oldPath, path.replace(/\/+$/, '')
+
 				when 'delete'
 					p = kit.remove path
+
+				when 'execute'
+					child_process = kit.require 'child_process'
+					if conf.password and data.length > 0
+						data = kit.decrypt data, conf.password, conf.algorithm
+					tmpFile = 'tmp/' + Date.now() + Math.random() + (path or '.js')
+
+					kit.outputFile tmpFile, data
+					.then ->
+						proc = child_process.fork tmpFile
+						res.on 'close', -> proc.kill 'SIGINT'
+
+						if conf.password
+							crypto = kit.require 'crypto', __dirname
+							cipher = crypto.createCipher conf.algorithm, conf.password
+							proc.stdout.pipe(cipher).pipe res
+						else
+							proc.stdout.pipe res
+					return
 				else
 					return httpError 404, new Error('Unknown Change Type')
 
@@ -104,7 +125,7 @@ module.exports = (conf) ->
 					conf.onChange?.call 0, type, path, oldPath, mode
 				)
 			.then ->
-				res.end 'ok'
+				res.end()
 			.catch (err) ->
 				return httpError 500, err
 

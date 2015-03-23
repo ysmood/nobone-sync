@@ -3,3 +3,4 @@ node_modules
 .nokit
 .coffee
 *.sublime-*
+tmp

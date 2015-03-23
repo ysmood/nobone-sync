@@ -139,7 +139,7 @@ POST /{info} HTTP/1.1
 
 - `error`
 
-  If operation failed the server will return http status code 400, 403, 404 or 500.
+  If operation failed the server will return http status code 200, 211, 400, 403, 404 or 500.
 
 ## FAQ
 

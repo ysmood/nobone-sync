@@ -27,6 +27,7 @@ module.exports = (conf, watch = true) ->
 		rdata = {
 			url: "http://#{conf.host}:#{conf.port}/"
 			method: 'POST'
+			body: false
 		}
 
 		p = kit.Promise.resolve()
@@ -52,11 +53,11 @@ module.exports = (conf, watch = true) ->
 		p = p.then ->
 			rdata.url += encodeInfo operationInfo
 			kit.request rdata
-		.then (data) ->
-			if data == 'ok'
+		.then (res) ->
+			if res.statusCode == 200
 				kit.log 'Synced: '.green + filePath
 			else
-				kit.log data
+				kit.log res.body
 		.catch (err) ->
 			kit.log err.stack.red
 
