@@ -103,6 +103,18 @@ conf = {
 
 client conf
 server conf
+
+
+# Send single request.
+client.send {
+    conf: conf
+    remotePath: '.coffee'
+    type: 'execute'
+    source: ''' console.log 'OK' '''
+}
+.then (out) ->
+    console.log out
+    # output => "OK\n"
 ```
 
 ## Protocol

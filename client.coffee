@@ -14,53 +14,6 @@ module.exports = (conf, watch = true) ->
 
 	process.env.pollingWatch = conf.pollingInterval
 
-	encodeInfo = (info) ->
-		str = JSON.stringify info
-		if conf.password
-			kit.encrypt str, conf.password, conf.algorithm
-			.toString 'hex'
-		else
-			encodeURIComponent str
-
-	sendReq = (filePath, type, remotePath, oldPath, stats) ->
-		operationInfo = { type, path: remotePath }
-		rdata = {
-			url: "http://#{conf.host}:#{conf.port}/"
-			method: 'POST'
-			body: false
-		}
-
-		p = kit.Promise.resolve()
-
-		switch type
-			when 'create', 'modify'
-				if not isDir filePath
-					operationInfo.mode = stats.mode
-					rdata.reqPipe = kit.createReadStream filePath
-					crypto = kit.require 'crypto', __dirname
-					if conf.password
-						cipher = crypto.createCipher 'aes128', conf.password
-						rdata.reqPipe = rdata.reqPipe.pipe cipher
-			when 'move'
-				rdata.reqData = kit.path.join(
-					conf.remoteDir
-					oldPath.replace(conf.localDir, '').replace('/', '')
-				)
-				if conf.password
-					rdata.reqData = kit.encrypt rdata.reqData,
-						conf.password, conf.algorithm
-
-		p = p.then ->
-			rdata.url += encodeInfo operationInfo
-			kit.request rdata
-		.then (res) ->
-			if res.statusCode == 200
-				kit.log 'Synced: '.green + filePath
-			else
-				kit.log res.body
-		.catch (err) ->
-			kit.log err.stack.red
-
 	watchHandler = (type, path, oldPath, stats) ->
 		kit.log type.cyan + ': ' + path +
 			(if oldPath then ' <- '.cyan + oldPath else '')
@@ -71,9 +24,11 @@ module.exports = (conf, watch = true) ->
 				if isDir(path) then '/' else ''
 			)
 
-		sendReq path, type, remotePath, oldPath, stats
+		send { conf, path, type, remotePath, oldPath, stats }
 		.then ->
 			conf.onChange?.call 0, type, path, oldPath, stats
+		.catch (err) ->
+			kit.log err.stack.red
 
 	push = (path, stats) ->
 		fileName = if conf.baseDir then kit.path.relative conf.baseDir, path else kit.path.basename path
@@ -82,7 +37,9 @@ module.exports = (conf, watch = true) ->
 
 		kit.log "Uploading file: ".green + fileName + ' to '.green + remotePath
 
-		sendReq path, 'create', remotePath, null, stats
+		send { conf, path, 'create', remotePath, stats }
+		.catch (err) ->
+			kit.log err.stack.red
 
 	if watch
 		kit.watchDir conf.localDir, {
@@ -111,3 +68,81 @@ module.exports = (conf, watch = true) ->
 				dot: true
 				iter: (info) ->
 					push info.path, info.stats
+
+###*
+ * Send single request.
+ * @param  {Object} opts Defaults:
+ * ```coffee
+ * { conf, path, type, remotePath, oldPath, stats }
+ * ```
+ * @return {Promise}
+###
+module.exports.send = send = (opts) ->
+	conf = opts.conf
+	opts.isPipeToStdout ?= true
+
+	encodeInfo = (info) ->
+		str = if kit._.isString info
+			info
+		else
+			JSON.stringify info
+
+		if conf.password
+			kit.encrypt str, conf.password, conf.algorithm
+			.toString 'hex'
+		else
+			encodeURIComponent str
+
+	operationInfo = { type: opts.type, path: opts.remotePath }
+	rdata = {
+		url: "http://#{conf.host}:#{conf.port}/"
+		method: 'POST'
+		body: false
+	}
+
+	p = kit.Promise.resolve()
+
+	switch opts.type
+		when 'create', 'modify'
+			if not isDir opts.path
+				operationInfo.mode = opts.stats.mode
+				rdata.reqPipe = kit.createReadStream opts.path
+				crypto = kit.require 'crypto', __dirname
+				if conf.password
+					cipher = crypto.createCipher 'aes128', conf.password
+					rdata.reqPipe = rdata.reqPipe.pipe cipher
+		when 'move'
+			rdata.reqData = kit.path.join(
+				conf.remoteDir
+				opts.oldPath.replace(conf.localDir, '').replace('/', '')
+			)
+			if conf.password
+				rdata.reqData = kit.encrypt rdata.reqData,
+					conf.password, conf.algorithm
+
+		when 'execute'
+			rdata.reqData = kit.encrypt opts.source, conf.password, conf.algorithm
+
+			if conf.password
+				crypto = kit.require 'crypto', __dirname
+				rdata.resPipe = crypto.createDecipher conf.algorithm, conf.password
+				rdata.resPipe.pipe process.stdout if opts.isPipeToStdout
+			else
+				rdata.resPipe = process.stdout if opts.isPipeToStdout
+
+			data = new Buffer 0
+			rdata.resPipe.on 'data', (chunk) ->
+				data = Buffer.concat [data, chunk]
+
+			rdata.url += encodeInfo operationInfo
+			return kit.request rdata
+			.then -> data
+
+	p = p.then ->
+		rdata.url += encodeInfo operationInfo
+		kit.request rdata
+	.then (res) ->
+		if res.statusCode == 200
+			kit.log 'Synced: '.green + opts.path
+		else
+			kit.log res.body

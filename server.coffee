@@ -100,15 +100,18 @@ module.exports = (conf) ->
 					p = kit.remove path
 
 				when 'execute'
-					child_process = kit.require 'child_process'
+					child_process = kit.require 'child_process', __dirname
 					if conf.password and data.length > 0
 						data = kit.decrypt data, conf.password, conf.algorithm
 					tmpFile = 'tmp/' + Date.now() + Math.random() + (path or '.js')
 
 					kit.outputFile tmpFile, data
 					.then ->
-						proc = child_process.fork tmpFile
-						res.on 'close', -> proc.kill 'SIGINT'
+						proc = child_process.fork tmpFile, { silent: true }
+						res.on 'error', -> proc.kill 'SIGINT'
+						proc.on 'close', ->
+							kit.remove tmpFile
+							conf.onChange?.call 0, type, path
 
 						if conf.password
 							crypto = kit.require 'crypto', __dirname

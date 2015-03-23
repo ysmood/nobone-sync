@@ -10,6 +10,7 @@ modifyPassed = false
 createPassed = false
 deletePassed = false
 statsPassed = false
+executePassed = false
 
 conf = {
 	localDir: 'test/local'
@@ -35,8 +36,9 @@ conf = {
 				statsPassed = kit.statSync('test/remote/dir/path/a.txt')
 					.mode.toString(8)[3] == '7'
 				createPassed = s == now
-				kit.log [modifyPassed, deletePassed, createPassed, statsPassed]
-				if modifyPassed and deletePassed and createPassed and statsPassed
+				kit.log [modifyPassed, deletePassed, createPassed, statsPassed, executePassed]
+				if modifyPassed and deletePassed and createPassed and
+				statsPassed and executePassed
 					process.exit 0
 				else
 					kit.err 'Sync does not work!'.red
@@ -49,9 +51,23 @@ kit.touchSync 'test/remote/d'
 
 client conf
 server kit._.defaults {
-	onChange: ->
+	onChange: (type) ->
+		if type == 'execute'
+			executePassed = true
+
 		new Promise (r) -> setTimeout r, 1
 }, conf
+
+setTimeout ->
+	client.send {
+		conf: conf
+		remotePath: '.coffee'
+		type: 'execute'
+		source: ''' console.log 'OK' '''
+	}
+	.then (out) ->
+		executePassed = out.toString() == 'OK\n'
+, 100
 
 setTimeout ->
 	kit.touchSync 'test/local/b.css'
