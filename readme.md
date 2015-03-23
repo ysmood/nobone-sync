@@ -104,12 +104,20 @@ conf = {
 client conf
 server conf
 
-
-# Send single request.
+# Send local 'a.css' to remote '/home/jack/a.css'
 client.send {
     conf: conf
-    remotePath: '.coffee'
+    type: 'create'
+    path: 'a.css'
+    remotePath: '/home/jack/a.css'
+}
+
+# Send single request. This request will let
+# the server execute a coffee string " console.log 'OK' "
+client.send {
+    conf: conf
     type: 'execute'
+    remotePath: '.coffee'
     source: ''' console.log 'OK' '''
 }
 .then (out) ->

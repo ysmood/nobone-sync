@@ -105,7 +105,9 @@ module.exports.send = send = (opts) ->
 	switch opts.type
 		when 'create', 'modify'
 			if not isDir opts.path
-				operationInfo.mode = opts.stats.mode
+				if opts.stats
+					operationInfo.mode = opts.stats.mode
+
 				rdata.reqPipe = kit.createReadStream opts.path
 				crypto = kit.require 'crypto', __dirname
 				if conf.password
