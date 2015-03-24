@@ -103,7 +103,7 @@ module.exports = (conf) ->
 					child_process = kit.require 'child_process', __dirname
 					if conf.password and data.length > 0
 						data = kit.decrypt data, conf.password, conf.algorithm
-					tmpFile = 'tmp/' + Date.now() + Math.random() + (path or '.js')
+					tmpFile = __dirname + '/tmp/' + Date.now() + Math.random() + (path or '.js')
 
 					kit.outputFile tmpFile, data
 					.then ->
