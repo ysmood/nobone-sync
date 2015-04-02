@@ -64,10 +64,11 @@ module.exports = (conf, watch = true) ->
 			kit.Promise.resolve()
 		.then ->
 			kit.glob conf.glob,
-				nodir: true
+				nodir: true # it doesn't work
 				dot: true
 				iter: (info) ->
-					push info.path, info.stats
+					if !info.isDir
+						push info.path, info.stats
 
 ###*
  * Send single request.
