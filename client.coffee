@@ -37,7 +37,7 @@ module.exports = (conf, watch = true) ->
 
 		kit.log "Uploading file: ".green + fileName + ' to '.green + remotePath
 
-		send { conf, path, 'create', remotePath, stats }
+		send { conf, path, type: 'create', remotePath, oldPath: null, stats }
 		.catch (err) ->
 			kit.log err.stack.red
 

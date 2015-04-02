@@ -26,7 +26,7 @@ module.exports = (conf) ->
 	service = http.createServer (req, res) ->
 
 		httpError = (code, err) ->
-			kit.err err.stack or err
+			kit.err err?.stack or err
 			res.statusCode = code
 			res.end http.STATUS_CODES[code]
 
@@ -64,7 +64,10 @@ module.exports = (conf) ->
 				f = kit.createWriteStream path, { mode }
 				f.on 'error', (err) ->
 					p = kit.Promise.reject err
-				reqStream.pipe f
+				new kit.Promise (resolve) ->
+                    reqStream.pipe f
+                    .on 'finish', -> resolve()
+
 
 		switch type
 			when 'create'
