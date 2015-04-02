@@ -65,9 +65,8 @@ module.exports = (conf) ->
 				f.on 'error', (err) ->
 					p = kit.Promise.reject err
 				new kit.Promise (resolve) ->
-                    reqStream.pipe f
-                    .on 'finish', -> resolve()
-
+					reqStream.pipe f
+					.on 'finish', -> resolve()
 
 		switch type
 			when 'create'
