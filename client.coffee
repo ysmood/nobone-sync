@@ -7,7 +7,7 @@ kit = require 'nokit'
 kit.require 'colors'
 
 isDir = (path)->
-	path[-1..] == '/'
+	path[-1..] == kit.path.sep
 
 module.exports = (conf, watch = true) ->
 	kit._.defaults conf, require('./config.default')
