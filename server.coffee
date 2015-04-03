@@ -70,7 +70,7 @@ module.exports = (conf) ->
 
 		switch type
 			when 'create'
-				if path[-1..] == '/'
+				if path[-1..] == kit.path.sep
 					p = kit.mkdirs path
 				else
 					p = pipeToFile()
