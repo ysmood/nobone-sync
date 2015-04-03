@@ -9,3 +9,5 @@ module.exports =
 	password: null
 	algorithm: 'aes128'
 	onChange: (type, path, oldPath) ->
+
+	onChanged: (type, path, oldPath) ->

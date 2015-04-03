@@ -57,6 +57,7 @@ module.exports = (conf) ->
 			else
 				req
 
+		oldPath = null
 		pipeToFile = ->
 			reqStream = getStream()
 			kit.mkdirs kit.path.dirname path
@@ -64,9 +65,8 @@ module.exports = (conf) ->
 				f = kit.createWriteStream path, { mode }
 				f.on 'error', (err) ->
 					p = kit.Promise.reject err
-				new kit.Promise (resolve) ->
-					reqStream.pipe f
-					.on 'finish', -> resolve()
+				reqStream.pipe f
+				.on 'finish', -> conf.onChanged? type, path, oldPath, mode
 
 		switch type
 			when 'create'
@@ -85,8 +85,6 @@ module.exports = (conf) ->
 		req.on 'error', (err) -> p = kit.Promise.reject err
 
 		req.on 'end', ->
-			oldPath = null
-
 			switch type
 				when 'create', 'modify'
 					null
@@ -135,7 +133,7 @@ module.exports = (conf) ->
 
 			p.then ->
 				kit.Promise.resolve(
-					conf.onChange?.call 0, type, path, oldPath, mode
+					conf.onChange? type, path, oldPath, mode
 				)
 			.then ->
 				res.end()

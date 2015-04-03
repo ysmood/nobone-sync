@@ -98,7 +98,9 @@ conf = {
     pollingInterval: 500
     password: '123456'
     onChange: (type, path, oldPath) ->
-        console.log('Write your custom code here')
+        console.log 'Write your custom code here'
+    onChanged: (type, path, oldPath) ->
+        console.log 'Happens when the operation is done.'
 }
 
 client conf
