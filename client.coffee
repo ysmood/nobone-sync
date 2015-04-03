@@ -37,7 +37,7 @@ module.exports = (conf, watch = true) ->
 
 		kit.log "Uploading file: ".green + fileName + ' to '.green + remotePath
 
-		send { conf, path, 'create', remotePath, stats }
+		send { conf, path, type: 'create', remotePath, oldPath: null, stats }
 		.catch (err) ->
 			kit.log err.stack.red
 
@@ -64,10 +64,11 @@ module.exports = (conf, watch = true) ->
 			kit.Promise.resolve()
 		.then ->
 			kit.glob conf.glob,
-				nodir: true
+				nodir: true # it doesn't work
 				dot: true
 				iter: (info) ->
-					push info.path, info.stats
+					if !info.isDir
+						push info.path, info.stats
 
 ###*
  * Send single request.
