@@ -1,7 +1,7 @@
 {
   "name": "nobone-sync",
   "version": "0.5.5",
-  "description": "A simple remote file sync tool for interal network.",
+  "description": "A simple remote file sync tool for development.",
   "main": "main.js",
   "engines": {
     "node": ">=0.10.0"
