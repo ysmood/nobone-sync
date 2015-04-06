@@ -8,13 +8,11 @@ cmder.option '-s, --server'
 cmder.option '-u, --upload <localFile host[:port]/path/to/dir>', 'Upload file or directory to remote host.'
 cmder.option '-p, --password <pwd>', 'Password.'
 cmder.option '-a, --algorithm <alg>', 'Algorithm', 'aes128'
-cmder.option '-v, --ver'
-
-cmder.parse process.argv
-
-if cmder.version
+cmder.option '-v, --ver', 'Print version', ->
 	console.log (require './package.json').version
 	process.exit()
+
+cmder.parse process.argv
 
 if cmder.upload
 	if cmder.args.length is 1
