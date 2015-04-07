@@ -4,7 +4,7 @@
 # This this the local watcher.
 
 kit = require 'nokit'
-kit.require 'colors'
+cs = kit.require 'colors/safe'
 
 isDir = (path)->
 	path[-1..] == kit.path.sep
@@ -15,8 +15,8 @@ module.exports = (conf, watch = true) ->
 	process.env.pollingWatch = conf.pollingInterval
 
 	watchHandler = (type, path, oldPath, stats) ->
-		kit.log type.cyan + ': ' + path +
-			(if oldPath then ' <- '.cyan + oldPath else '')
+		kit.log cs.cyan(type) + ': ' + path +
+			(if oldPath then cs.cyan(' <- ') + oldPath else '')
 
 		remotePath = kit.path.join(
 				conf.remoteDir
@@ -28,18 +28,18 @@ module.exports = (conf, watch = true) ->
 		.then ->
 			conf.onChange?.call 0, type, path, oldPath, stats
 		.catch (err) ->
-			kit.log err.stack.red
+			kit.log cs.red err.stack
 
 	push = (path, stats) ->
 		fileName = if conf.baseDir then kit.path.relative conf.baseDir, path else kit.path.basename path
 
 		remotePath = kit.path.join conf.remoteDir, fileName
 
-		kit.log "Uploading file: ".green + fileName + ' to '.green + remotePath
+		kit.log cs.green("Uploading file: ") + fileName + cs.green(' to ') + remotePath
 
 		send { conf, path, type: 'create', remotePath, oldPath: null, stats }
 		.catch (err) ->
-			kit.log err.stack.red
+			kit.log cs.red err.stack
 
 	if watch
 		kit.watchDir conf.localDir, {
@@ -47,9 +47,9 @@ module.exports = (conf, watch = true) ->
 			handler: watchHandler
 		}
 		.then (list) ->
-			kit.log 'Watched: '.cyan + kit._.keys(list).length
+			kit.log cs.cyan('Watched: ') + kit._.keys(list).length
 		.catch (err) ->
-			kit.log err.stack.red
+			kit.log cs.red err.stack
 	else
 		conf.glob = conf.localDir
 		kit.lstat conf.localDir
@@ -149,6 +149,6 @@ module.exports.send = send = (opts) ->
 		kit.request rdata
 	.then (res) ->
 		if res.statusCode == 200
-			kit.log 'Synced: '.green + opts.path
+			kit.log cs.green('Synced: ') + opts.path
 		else
 			kit.log res.body

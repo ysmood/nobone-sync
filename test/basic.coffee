@@ -2,7 +2,7 @@ client = require '../client'
 server = require '../server'
 kit = require 'nokit'
 { Promise } = kit
-kit.require 'colors'
+cs = kit.require 'colors/safe'
 
 now = Date.now() + ''
 
@@ -41,7 +41,7 @@ conf = {
 				statsPassed and executePassed
 					process.exit 0
 				else
-					kit.err 'Sync does not work!'.red
+					kit.err cs.red 'Sync does not work!'
 					process.exit 1
 			, 500
 }

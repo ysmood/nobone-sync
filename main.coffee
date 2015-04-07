@@ -1,5 +1,5 @@
 kit = require 'nokit'
-kit.require 'colors'
+cs = kit.require 'colors/safe'
 
 cmder = require 'commander'
 
@@ -46,7 +46,7 @@ else
 			kit.err err.stack
 			process.exit 1
 		else
-			kit.log 'No config specified, use default.'.yellow
+			kit.log cs.yellow 'No config specified, use default.'
 			conf = {}
 
 	if cmder.server

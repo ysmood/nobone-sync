@@ -5,7 +5,7 @@
 
 
 kit = require 'nokit'
-kit.require 'colors'
+cs = kit.require 'colors/safe'
 http = require 'http'
 
 localPath = (path) ->
@@ -44,7 +44,7 @@ module.exports = (conf) ->
 			if absPath.indexOf(absRoot) != 0
 				return httpError 403, err
 
-		kit.log "[server] ".grey + type.cyan + ': ' + path
+		kit.log cs.grey("[server] ") + cs.cyan(type) + ': ' + path
 
 		p = kit.Promise.resolve()
 
@@ -143,4 +143,4 @@ module.exports = (conf) ->
 				return httpError 500, err
 
 	service.listen conf.port, ->
-		kit.log "Listen: ".cyan + conf.port
+		kit.log cs.cyan("Listen: ") + conf.port
