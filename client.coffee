@@ -56,16 +56,18 @@ module.exports = (conf, watch = true) ->
 		.then (stat)->
 			if stat.isDirectory()
 				conf.baseDir = kit.path.dirname conf.localDir
-				if conf.localDir.slice(-1) is '/'
-					conf.glob = conf.localDir + '**/*'
-				else
-					conf.glob = conf.localDir + '/**/*'
+				if kit._.isString conf.pattern
+					conf.pattern = [conf.pattern]
+				conf.glob = conf.pattern.map (p) ->
+					if p[0] == '!'
+						'!' + kit.path.join(conf.localDir, p[1..])
+					else
+						kit.path.join conf.localDir, p
 		, (err)->
-			kit.Promise.resolve()
+			kit.Promise.resolve(err)
 		.then ->
 			kit.glob conf.glob,
-				nodir: true # it doesn't work
-				dot: true
+				all: true
 				iter: (info) ->
 					if !info.isDir
 						push info.path, info.stats
