@@ -31,15 +31,7 @@ module.exports = (conf, watch = true) ->
 			kit.log cs.red err.stack
 
 	push = (path, stats) ->
-		fileName = if conf.baseDir then kit.path.relative conf.baseDir, path else kit.path.basename path
-
-		remotePath = kit.path.join conf.remoteDir, fileName
-
-		kit.log cs.green("Uploading file: ") + fileName + cs.green(' to ') + remotePath
-
-		send { conf, path, type: 'create', remotePath, oldPath: null, stats }
-		.catch (err) ->
-			kit.log cs.red err.stack
+		watchHandler 'create', path, null, stats
 
 	if watch
 		kit.watchDir conf.localDir, {
@@ -55,7 +47,6 @@ module.exports = (conf, watch = true) ->
 		kit.lstat conf.localDir
 		.then (stat)->
 			if stat.isDirectory()
-				conf.baseDir = kit.path.dirname conf.localDir
 				if kit._.isString conf.pattern
 					conf.pattern = [conf.pattern]
 				conf.glob = conf.pattern.map (p) ->
