@@ -20,7 +20,7 @@ module.exports = (conf, watch = true) ->
 
 		remotePath = kit.path.join(
 				conf.remoteDir
-				kit.path.relative(conf.localDir, path)
+				if conf._useFilename then kit.path.basename path else kit.path.relative(conf.localDir, path)
 				if isDir(path) then '/' else ''
 			)
 
@@ -54,7 +54,11 @@ module.exports = (conf, watch = true) ->
 						'!' + kit.path.join(conf.localDir, p[1..])
 					else
 						kit.path.join conf.localDir, p
+			else
+				conf._useFilename = true
 		, (err)->
+			# maybe a regexp
+			conf._useFilename = true
 			kit.Promise.resolve(err)
 		.then ->
 			kit.glob conf.glob,
