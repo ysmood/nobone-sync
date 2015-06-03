@@ -15,7 +15,7 @@ cmder.option '-v, --ver', 'Print version', ->
 cmder.parse process.argv
 
 cliConf = {}
-configFile = cmder.args[0] or cmder.args[1]
+configFile = cmder.args[1] or cmder.args[0]
 
 if cmder.upload
 	if cmder.upload == true
@@ -62,4 +62,3 @@ else
 	app = require './client'
 
 app conf, !cmder.upload
-
