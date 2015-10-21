@@ -32,8 +32,7 @@
   "homepage": "https://github.com/ysmood/nobone-sync",
   "dependencies": {
     "commander": "2.7.1",
-    "nokit": "0.5.8",
-    "coffee-script": "1.9.1"
+    "nokit": "0.5.8"
   },
   "files": [
     "bin",
