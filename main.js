@@ -62,7 +62,6 @@ cmder.password && (cliConf.password = cmder.password);
 cmder.algorithm && (cliConf.algorithm = cmder.algorithm);
 
 try {
-  require('coffee-script/register');
   conf = require(kit.path.resolve(configFile));
 } catch (_error) {
   err = _error;

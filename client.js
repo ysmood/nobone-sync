@@ -21,6 +21,9 @@ module.exports = function(conf, watch) {
   kit._.defaults(conf, require('./config.default'));
   process.env.pollingWatch = conf.pollingInterval;
   watchHandler = function(type, path, oldPath, stats) {
+    if (stats.isDirectory())
+      path = path + kit.path.sep;
+
     var remotePath;
     kit.log(cs.cyan(type) + ': ' + path + (oldPath ? cs.cyan(' <- ') + oldPath : ''));
     remotePath = kit.path.join(conf.remoteDir, conf._useFilename ? kit.path.basename(path) : kit.path.relative(conf.localDir, path), isDir(path) ? '/' : '');
@@ -87,7 +90,7 @@ module.exports = function(conf, watch) {
 /**
  * Send single request.
  * @param  {Object} opts Defaults:
- * ```coffee
+ * ```js
  * { conf, path, type, remotePath, oldPath, stats }
  * ```
  * @return {Promise}

@@ -1,6 +1,6 @@
 {
   "name": "nobone-sync",
-  "version": "0.5.10",
+  "version": "0.5.12",
   "description": "A simple remote file sync tool for development.",
   "main": "main.js",
   "engines": {
@@ -11,8 +11,7 @@
   },
   "scripts": {
     "no": "no",
-    "test": "no test",
-    "prepublish": "no build"
+    "test": "no test"
   },
   "repository": {
     "type": "git",
@@ -32,7 +31,7 @@
   "homepage": "https://github.com/ysmood/nobone-sync",
   "dependencies": {
     "commander": "2.9.0",
-    "nokit": "0.14.8"
+    "nokit": "0.14.9"
   },
   "files": [
     "bin",

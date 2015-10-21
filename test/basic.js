@@ -76,9 +76,9 @@ server(kit._.defaults({
 setTimeout(function() {
   return client.send({
     conf: conf,
-    remotePath: '.coffee',
+    remotePath: '.js',
     type: 'execute',
-    source: 'require(\'nokit\').log \'OK\'\nthrow \'error\''
+    source: 'require(\'nokit\').log(\'OK\')\nthrow \'error\''
   }).then(function(out) {
     return executePassed = out.toString().indexOf('OK') > 0 && out.toString().indexOf('error') > 0;
   });
