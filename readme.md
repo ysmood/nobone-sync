@@ -26,32 +26,34 @@ Start a remote file server:
 
 Start a local client to push change to remote server.
 
-    nobone-sync config.coffee
+    nobone-sync config.js
 
-The defaults of `config.coffee` is:
+The defaults of `config.js` is:
 
-```coffee
-module.exports =
-    localDir: 'localDir'
+```js
+module.exports = {
+    localDir: 'localDir',
 
-    # It decides the root path to upload to.
-    remoteDir: 'remoteDir'
+    // It decides the root path to upload to.
+    remoteDir: 'remoteDir',
 
-    # It decides the root accessible path.
-    rootAllowed: '/'
+    // It decides the root accessible path.
+    rootAllowed: '/',
 
-    host: '127.0.0.1'
-    port: 8345
-    pattern: '**'
-    pollingInterval: 500
+    host: '127.0.0.1',
+    port: 8345,
+    pattern: '**',
+    pollingInterval: 500,
 
-    # If it is set, transfer data will be encrypted with the algorithm.
-    password: null
-    algorithm: 'aes128'
+    // If it is set, transfer data will be encrypted with the algorithm.
+    password: null,
+    algorithm: 'aes128',
 
-    onChange: (type, path, oldPath) ->
-        # It can also return a promise.
+    onChange: function (type, path, oldPath) {
+        // It can also return a promise.
         console.log('Write your custom code here')
+    }
+}
 ```
 
 The `pattern` can be a string or an array, it takes advantage of `minimatch`.
@@ -84,48 +86,50 @@ For example:
 
 Example:
 
-```coffee
-client = require 'nobone-sync/client'
-server = require 'nobone-sync/server'
+```js
+var client = require('nobone-sync/client');
+var server = require('nobone-sync/server');
 
-conf = {
-    localDir: 'localDir'
-    remoteDir: 'remoteDir'
-    rootAllowed: 'remoteDir'
-    host: '127.0.0.1'
-    port: 8345
-    pattern: '**'
-    pollingInterval: 500
-    password: '123456'
-    onChange: (type, path, oldPath) ->
-        console.log('Write your custom code here')
-}
+var conf = {
+    localDir: 'localDir',
+    remoteDir: 'remoteDir',
+    rootAllowed: 'remoteDir',
+    host: '127.0.0.1',
+    port: 8345,
+    pattern: '**',
+    pollingInterval: 500,
+    password: '123456',
+    onChange: function (type, path, oldPath) {
+        console.log('Write your custom code here');
+    }
+};
 
-client conf
-server conf
+client(conf)
+server(conf)
 
-# Send local 'a.css' to remote '/home/jack/a.css'
-client.send {
-    conf: conf
-    type: 'create'
-    path: 'a.css'
+// Send local 'a.css' to remote '/home/jack/a.css'
+client.send({
+    conf: conf,
+    type: 'create',
+    path: 'a.css',
     remotePath: '/home/jack/a.css'
-}
+});
 
-# Send single request. This request will let
-# the server execute a coffee string " console.log 'OK' "
-client.send {
-    conf: conf
-    type: 'execute'
-    remotePath: '.coffee'
+// Send single request. This request will let
+// the server execute a js string " console.log 'OK' "
+client.send({
+    conf: conf,
+    type: 'execute',
+    remotePath: '.js',
 
-    # The source code will run under the same directory of nobone-sync.
-    # You can require all the dependencies of nobone-sync.
-    source: ''' require('nokit').log 'OK' '''
-}
-.then (out) ->
-    console.log out
-    # output => "OK\n"
+    // The source code will run under the same directory of nobone-sync.
+    // You can require all the dependencies of nobone-sync.
+    source: `require('nokit').log('OK')`
+})
+.then(function (out) {
+    console.log(out);
+    // output => "OK\n"
+});
 ```
 
 ## Protocol
