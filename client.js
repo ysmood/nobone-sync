@@ -7,7 +7,7 @@ var cs, isDir, kit, send;
 
 kit = require('nokit');
 
-cs = kit.require('colors/safe');
+cs = kit.require('brush');
 
 isDir = function(path) {
   return path.slice(-1) === kit.path.sep;

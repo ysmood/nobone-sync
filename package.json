@@ -31,8 +31,8 @@
   },
   "homepage": "https://github.com/ysmood/nobone-sync",
   "dependencies": {
-    "commander": "2.7.1",
-    "nokit": "0.5.8"
+    "commander": "2.9.0",
+    "nokit": "0.14.8"
   },
   "files": [
     "bin",

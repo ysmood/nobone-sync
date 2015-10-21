@@ -3,7 +3,7 @@ var app, cliConf, cmder, conf, configFile, cs, err, kit, port, remote;
 
 kit = require('nokit');
 
-cs = kit.require('colors/safe');
+cs = kit.require('brush');
 
 cmder = require('commander');
 

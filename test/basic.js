@@ -8,7 +8,7 @@ kit = require('nokit');
 
 Promise = kit.Promise;
 
-cs = kit.require('colors/safe');
+cs = kit.require('brush');
 
 now = Date.now() + '';
 

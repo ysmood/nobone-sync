@@ -7,7 +7,7 @@ var cs, http, kit, localPath;
 
 kit = require('nokit');
 
-cs = kit.require('colors/safe');
+cs = kit.require('brush');
 
 http = require('http');
 
